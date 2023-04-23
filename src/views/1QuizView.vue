@@ -189,7 +189,7 @@
 
             <h2>{{ tr('condition') }}</h2>
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <svg class="colored-svg" xmlns="http://www.w3.org/2000/svg" width="397" height="521" fill="none"
                          viewBox="0 0 397 521">
                         <g class="final">
@@ -462,7 +462,7 @@
                 </div>
 
 
-                <div class="col-md-3" v-if="colored">
+                <div class="col-md-4    " v-if="colored">
 
                     <template v-for="(color, k) in colored" :key="k">
                         <div class="color__element" v-if="color!=0">
@@ -531,7 +531,7 @@
                     </button>
                 </div>
             </div>
-            <button class="btn btnprimary border" @click="photo_external_damage.push({photo: null, description: ''})">
+            <button class="btn btn-primary border mt-2" @click="photo_external_damage.push({photo: null, description: ''})">
                 {{ tr('add_photo') }}
             </button>
 
@@ -566,7 +566,7 @@
                     </button>
                 </div>
             </div>
-            <button class="btn btn-primary border " @click="photo_internal_damage.push({photo: null, description: ''})">
+            <button class="btn btn-primary border mt-2" @click="photo_internal_damage.push({photo: null, description: ''})">
                 {{ tr('add_photo') }}
             </button>
 
@@ -597,7 +597,7 @@
                     </button>
                 </div>
             </div>
-            <button class="btn btn-primary border" @click="photo_external.push({photo: ''})">
+            <button class="btn btn-primary border mt-2" @click="photo_external.push({photo: ''})">
                 {{ tr('add_photo') }}
             </button>
             <div class="sub-title fw-bold my-3">{{ tr('cabin') }}</div>
@@ -626,7 +626,7 @@
                 </div>
 
             </div>
-            <button class="btn btn-primary border" @click="photo_internal.push({photo: ''})">
+            <button class="btn btn-primary border mt-3" @click="photo_internal.push({photo: ''})">
                 {{ tr('add_photo') }}
             </button>
 
@@ -714,6 +714,7 @@
                             <option value="RUB">RUB</option>
                             <option value="EUR">EUR</option>
                             <option value="USD">USD</option>
+                            <option value="USD">AED</option>
                         </select>
                     </div>
                 </div>
@@ -749,7 +750,7 @@
                                 @click="modal_color=false"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="range" min="1" max="5" class="form-range" v-model="colored[chosen_detail]">
+                        <input type="range" min="0" max="5" class="form-range" v-model="colored[chosen_detail]">
                         {{ colored[chosen_detail] ? ((colored[chosen_detail] != 5 ? (tr('before') + ' ') : '') + colors[colored[chosen_detail]].label + ' ' + tr('mkm')) : '' }}
                     </div>
                     <div class="modal-footer">
@@ -801,6 +802,14 @@ const translations = {
     vin: {
         en: 'VIN',
         ru: 'VIN',
+    },
+    photo_vin: {
+        en: 'photo of VIN',
+        ru: 'фото VIN',
+    },
+    photo_tech_info: {
+        en: 'photo of vehicle infomation',
+        ru: 'фото информации о транспортном средстве',
     },
     fill: {
         en: 'Fill',
@@ -1380,6 +1389,10 @@ const translations = {
         en: 'After submitting the report for review, you will no longer be able to edit the report.',
         ru: 'После отправки отчёта на проверку вы больше не сможете редактировать отчёт.',
     },
+    fillFields: {
+        en: 'Fill these fields: ',
+        ru: 'Не заполнены следующие поля: ',
+    }
 };
 
 
@@ -1439,6 +1452,11 @@ export default {
             next: false,
 
             colors: {
+                0: {
+                    value: 0,
+                    label: 0,
+                    color: '#fff0',
+                },
                 1: {
                     value: 1,
                     label: 100,
@@ -1467,6 +1485,7 @@ export default {
             },
             loader: true,
             error_404: false,
+            errors:[],
             modal_color: false,
             confirm_modal: false,
             chosen_detail: '',
@@ -1856,17 +1875,23 @@ export default {
         },
         saveAndCheck() {
             this.loader = true
-            axios.post(base_url + 'reports/saveCheck', this.getReportData()).then(() => {
-                alert('Сохранено')
-                this.$router.push({'name': 'quiz-new'})
-            }).catch(error => {
-                // Handle any errors that occurred during the request
-                alert('Ошибка сохранения')
-
-                console.error(error);
-            }).finally(() => {
+            if (!this.validate()) {
+                alert(this.tr('fillFields') + this.errors.join(', ').toLowerCase())
                 this.loader = false
-            });
+            }
+            else {
+                axios.post(base_url + 'reports/saveCheck', this.getReportData()).then(() => {
+                    alert('Сохранено')
+                    this.$router.push({'name': 'quiz-new'})
+                }).catch(error => {
+                    // Handle any errors that occurred during the request
+                    alert('Ошибка сохранения')
+
+                    console.error(error);
+                }).finally(() => {
+                    this.loader = false
+                });
+            }
         },
         updateReport() {
             clearTimeout(this.reportTimeout);
@@ -2037,6 +2062,32 @@ export default {
             });
 
 
+        },
+        validate(){
+            this.errors = []
+            if (!this.photo_vin.photo) this.errors.push(this.tr('photo_vin'));
+            if (!this.photo_tech_info.photo) this.errors.push(this.tr('photo_tech_info'));
+            if (!this.vin) this.errors.push(this.tr('vin'));
+            if (!this.brand && !this.customBrand) this.errors.push(this.tr('brand'));
+            if (!this.model) this.errors.push(this.tr('model'));
+            if (!this.mileage) this.errors.push(this.tr('mileage'));
+            if (!this.gearbox) this.errors.push(this.tr('gearbox'));
+            if (!this.year) this.errors.push(this.tr('year'));
+            if (!this.body) this.errors.push(this.tr('body'));
+            // if (!this.body_color) this.errors.push(this.tr('body_color'));
+            if (!this.engine_volume) this.errors.push(this.tr('engineVolume'));
+            if (!this.engine_power) this.errors.push(this.tr('enginePower'));
+            if (!this.drive) this.errors.push(this.tr('drive'));
+            if (!this.specification) this.errors.push(this.tr('specification'));
+            // if (this.crashes === undefined) this.errors.push(this.tr('crashes'));
+            if (this.guarantee_check) {
+                if (!this.guarantee.year) this.errors.push(this.tr('guarantee') + this.tr('yearGuarantee'));
+                if (!this.guarantee.month) this.errors.push(this.tr('guarantee') + this.tr('monthGuarantee'));
+            }
+            if(!this.price.currency) this.errors.push(this.tr('currency'));
+            if (!this.price.value) this.errors.push(this.tr('price'))
+            if (!this.price.value) this.errors.push(this.tr('comment'))
+            return this.errors.length <= 0
         }
     },
 
@@ -2193,6 +2244,8 @@ $form-file-button-color: rgba(74, 48, 217)
     padding: 0.5rem
     justify-content: center
     width: 100%
+    .btn
+        line-height: 120%
 
 body
     padding-bottom: 6rem !important
@@ -2219,11 +2272,11 @@ body
         margin: 1rem 0
 
         & > *:nth-child(1)
-            grid-column: 1/2
-            grid-row: 1/3
+            grid-column: 1/3
+            grid-row: 2/3
 
         & > *:nth-child(2)
-            grid-column: 2/3
+            grid-column: 1/4
             grid-row: 1/2
 
         .col-md-1, .col-1
@@ -2331,7 +2384,7 @@ h2
     & label
         display: block
         padding: 8px 16px
-        text-align: center
+        text-align: left
         width: fit-content
         border: 1px solid #482CD9
         background-color: #FFFFFF
