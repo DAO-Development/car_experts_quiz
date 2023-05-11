@@ -1,12 +1,31 @@
 <template>
-  <RouterView/>
+    <div class="">
+
+        <RouterView/>
+    </div>
+
 </template>
 
 <script>
+const translations =
+    {
+        title: {
+            en: 'Car report',
+            ru: 'Отчет по автомобилю',
+        },
+    };
 
 export default {
-  name: 'App',
+    name: 'App',
+    methods :{
 
+    tr(field) {
+        if (translations[field])
+            return translations[field][this.master.lang]
+        else return field
+    }
+
+}
 }
 </script>
 
@@ -20,6 +39,51 @@ export default {
 <style lang="sass">
 $primary: #4E2EE1
 $primary-dark: #2E2cE1
+.new-choice-photo
+    display: grid
+    place-items: center
+    width: 100%
+.usl-header
+    width: 100vw
+    height: 75px
+    background: #482CD9
+    color: white
+    margin-bottom: 50px
+    @media (max-width: 766px)
+        margin-bottom: 30px
+
+    .container
+        display: flex
+        justify-content: space-between
+        align-items: center
+        height: 100%
+
+
+    &__logo
+        height: 52px
+
+        img
+            height: 100%
+
+    &__text
+        font-size: 32px
+        font-weight: 400
+        line-height: 1.2
+        letter-spacing: 0em
+        text-align: left
+
+
+    @media (max-width: 766px)
+
+        height: 50px
+
+        &__text
+            display: none
+
+        &__logo
+            height: 32px
+        .container
+            justify-content: center
 
 .btn-primary
     background: $primary

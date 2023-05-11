@@ -1,15 +1,31 @@
 <template>
     <div class="">
+
+        <div class="usl-header">
+            <div class="container">
+                <div class="usl-header__text">
+                    {{ tr('title') }}
+                </div>
+                <div class="usl-header__logo">
+                    <img src="./../assets/logo.svg" alt="">
+                </div>
+            </div>
+
+        </div>
+
         <div v-if="error_404" class="container">
             <h1>404</h1>
         </div>
-        <div v-else class="container">
-            <h1>{{ tr('title') }}</h1>
-
+        <div v-else class="container pb-5">
             <div class="mb-5">
                 <h2>{{ tr('mainInfo') }}</h2>
+
                 <div class="form-group my-3">
                     <label class="form-label">{{ tr('vin') }}</label>
+                    <input type="file" class=" col-md-9 form-control" accept="image/*" @change="previewFile"
+                           data-field="photo_vin" data-subfield="photo">
+                    <img class="preview-image" v-if="photo_vin.preview" :src="photo_vin.preview"
+                         alt="Preview Image"/>
                     <div class="d-flex gap-3">
                         <input v-model="vin" type="text" class="form-control">
                         <button class="btn btn-primary" @click="decodeVin">{{ tr('fill') }}</button>
@@ -51,7 +67,7 @@
                             <select v-model="body" name="" class="form-select">
                                 <option :value="tr('sedan')">{{ tr('sedan') }}</option>
                                 <option :value="tr('coupe')">{{ tr('coupe') }}</option>
-                                <option :value="tr('crossover')">{{ tr('crossover') }}</option>
+                                <option :value="tr('crossover')">SUV</option>
                             </select>
                         </div>
                     </div>
@@ -137,6 +153,12 @@
 
                     <div class="col-md-3" v-if="guarantee_check">
                         <div class="form-group">
+                            <label class="form-label">{{ tr('mileage') }}</label>
+                            <input v-model="guarantee.mileage" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="col-md-3" v-if="guarantee_check">
+                        <div class="form-group">
                             <label class="form-label">{{ tr('yearGuarantee') }}</label>
                             <input v-model="guarantee.year" class="form-control" type="text">
                         </div>
@@ -179,7 +201,7 @@
                 <div class="col-md-4 col-12">
                     <div class="form-group">
                         <label class="form-label">{{ tr('wearPhoto') }}</label>
-                        <input type="file" class="form-control" accept="image/*" @change="previewFiles"
+                        <input type="file" class="form-control" accept="image/*" @change="previewFile"
                                data-field="tyre" data-subfield="photo">
                         <img class="preview-image" v-if="tyre.preview" :src="tyre.preview" alt="Preview Image"/>
                     </div>
@@ -476,19 +498,11 @@
 
             <h2>{{ tr('registrationData') }}</h2>
             <div class="row">
-                <div class="col-md-5">
-                    <div class="form-group my-3">
-                        <label class="form-label">{{ tr('vin') }}</label>
-                        <input type="file" class=" col-md-9 form-control" accept="image/*" @change="previewFiles"
-                               data-field="photo_vin" data-subfield="photo">
-                        <img class="preview-image" v-if="photo_vin.preview" :src="photo_vin.preview"
-                             alt="Preview Image"/>
-                    </div>
-                </div>
+
                 <div class="col-md-5">
                     <div class="form-group my-3">
                         <label class="form-label">{{ tr('vehicleInfo') }}</label>
-                        <input type="file" class="col-md-9 form-control" accept="image/*" @change="previewFiles"
+                        <input type="file" class="col-md-9 form-control" accept="image/*" @change="previewFile"
                                data-field="photo_tech_info" data-subfield="photo">
                         <img class="preview-image" v-if="photo_tech_info.preview" :src="photo_tech_info.preview"
                              alt="Preview Image"/>
@@ -509,7 +523,7 @@
                         <label class="form-label">Фото</label>
 
 
-                        <input type="file" class=" col-md-9 form-control" accept="image/*" @change="previewFiles"
+                        <input type="file" class=" col-md-9 form-control" accept="image/*" @change="previewFile"
                                data-field="photo_external_damage" :data-index="i" data-subfield="photo">
 
                     </div>
@@ -545,7 +559,7 @@
                 <div class="col-md-3">
                     <div class="form-group my-md-3">
                         <label class="form-label">Фото</label>
-                        <input type="file" class="form-control" accept="image/*" @change="previewFiles"
+                        <input type="file" class="form-control" accept="image/*" @change="previewFile"
                                data-field="photo_internal_damage" :data-index="i" data-subfield="photo">
                     </div>
                 </div>
@@ -579,13 +593,13 @@
                          :src="photo_external[i]['preview']" alt="Preview Image"/>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="form-group my-md-3">
-                        <label class="form-label">Фото</label>
-                        <input type="file" class="form-control" accept="image/*" @change="previewFiles"
-                               data-field="photo_external" :data-index="i" data-subfield="photo">
-                    </div>
-                </div>
+<!--                <div class="col-md-3">-->
+<!--                    <div class="form-group my-md-3">-->
+<!--                        <label class="form-label">Фото</label>-->
+<!--                        <input type="file" class="form-control" accept="image/*" @change="previewFile"-->
+<!--                               data-field="photo_external" :data-index="i" data-subfield="photo">-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="col-1">
                     <button class="btn btn-delete p-1" @click="photo_external.splice(i, 1)">
                         <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiBox-root css-1om0hkc"
@@ -597,9 +611,10 @@
                     </button>
                 </div>
             </div>
-            <button class="btn btn-primary border mt-2" @click="photo_external.push({photo: ''})">
-                {{ tr('add_photo') }}
-            </button>
+            <input type="file" multiple class="form-control mt-3" accept="image/*" @change="previewFiles"
+                   data-field="photo_external" :data-index="i" data-subfield="photo">
+
+
             <div class="sub-title fw-bold my-3">{{ tr('cabin') }}</div>
             <div class="row photo-row" v-for="(photo,i) in photo_internal" :key="i">
                 <div class="col-md-3">
@@ -607,13 +622,6 @@
                          :src="photo_internal[i]['preview']" alt="Preview Image"/>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="form-group my-md-3">
-                        <label class="form-label">Фото</label>
-                        <input type="file" class="form-control" accept="image/*" @change="previewFiles"
-                               data-field="photo_external" :data-index="i" data-subfield="photo">
-                    </div>
-                </div>
                 <div class="col-1">
                     <button class="btn btn-delete p-1" @click="photo_internal.splice(i, 1)">
                         <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiBox-root css-1om0hkc"
@@ -626,46 +634,48 @@
                 </div>
 
             </div>
-            <button class="btn btn-primary border mt-3" @click="photo_internal.push({photo: ''})">
-                {{ tr('add_photo') }}
-            </button>
+            <input type="file" multiple class="form-control" accept="image/*" @change="previewFiles"
+                   data-field="photo_external" :data-index="i" data-subfield="photo">
 
             <h2>{{ tr('equipment') }}</h2>
-            <div class="row g-2">
-                <div class="col-md-4" v-for="item in equipment" :key="item.name">
-                    <div class="form-group my-chip">
-                        <input class="form-check-input mx-1" type="checkbox" v-model="item.value" :id="item.name">
-                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
-                    </div>
-                </div>
-            </div>
-            <!--            <div class="fw-semibold">Basic option</div>-->
-            <!--            <div class="row g-2">-->
-            <!--                <div class="col-md-4" v-for="item in equipment_basic" :key="item.name">-->
-            <!--                    <div class="form-group my-chip">-->
-            <!--                        <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name].value" :id="item.name">-->
-            <!--                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <!--            <div class="fw-semibold">Medium option</div>-->
-            <!--            <div class="row g-2">-->
-            <!--                <div class="col-md-4" v-for="item in equipment_medium" :key="item.name">-->
-            <!--                    <div class="form-group my-chip">-->
-            <!--                        <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name].value" :id="item.name">-->
-            <!--                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <!--            <div class="fw-semibold">Premium option</div>-->
-            <!--            <div class="row g-2">-->
-            <!--                <div class="col-md-4" v-for="item in equipment_premium" :key="item.name">-->
-            <!--                    <div class="form-group my-chip">-->
-            <!--                        <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name].value" :id="item.name">-->
-            <!--                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
+<!--            <div class="row g-2">-->
+<!--                <div class="col-md-4" v-for="item in equipment" :key="item.name">-->
+<!--                    <div class="form-group my-chip">-->
+<!--                        <input class="form-check-input mx-1" type="checkbox" v-model="item.value" :id="item.name">-->
+<!--                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+                        <div class="fw-semibold mb-3">Basic option</div>
+                        <div class="row g-2">
+                            <div class="col-md-4" v-for="item in equipment_basic" :key="item.name">
+                                <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
+                                    <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
+                                    <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
+                                </div>
+                                <div v-else class="">{{ item.name }}</div>
+                            </div>
+                        </div>
+                        <div class="fw-semibold mb-3">Medium option</div>
+                        <div class="row g-2">
+                            <div class="col-md-4" v-for="item in equipment_medium" :key="item.name">
+                                <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
+                                    <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
+                                    <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
+                                </div>
+                                <div v-else class="">{{ item.name }}</div>
+                            </div>
+                        </div>
+                        <div class="fw-semibold mb-3">Premium option</div>
+                        <div class="row g-2">
+                            <div class="col-md-4" v-for="item in equipment_premium" :key="item.name">
+                                <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
+                                    <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
+                                    <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
+                                </div>
+                                <div v-else class="">{{ item.name }}</div>
+                            </div>
+                        </div>
 
             <h2>{{ tr('functionality') }}</h2>
             <div class="row">
@@ -688,16 +698,6 @@
             <h2>{{ tr('comment') }}</h2>
             <textarea v-model="comment" class="form-control" rows="5"></textarea>
 
-            <h2>{{ tr('computer_diagnostics') }}</h2>
-            <div class="col-md-6">
-                <input type="file" class="form-control" accept=".pdf" @change="previewFiles"
-                       data-field="computer_diag">
-            </div>
-
-            <h2>{{ tr('video_report') }}</h2>
-            <div class="col-md-6">
-                <input type="file" class="form-control" accept="video/*" @change="previewFiles" data-field="video">
-            </div>
 
             <h2>{{ tr('price') }}</h2>
             <div class="row">
@@ -714,10 +714,21 @@
                             <option value="RUB">RUB</option>
                             <option value="EUR">EUR</option>
                             <option value="USD">USD</option>
-                            <option value="USD">AED</option>
+                            <option value="AED">AED</option>
                         </select>
                     </div>
                 </div>
+            </div>
+
+            <h2>{{ tr('computer_diagnostics') }}</h2>
+            <div class="col-md-6">
+                <input type="file" class="form-control" accept=".pdf" @change="previewFile"
+                       data-field="computer_diag">
+            </div>
+
+            <h2>{{ tr('video_report') }}</h2>
+            <div class="col-md-6">
+                <input type="file" class="form-control" accept="video/*" @change="previewFile" data-field="video">
             </div>
             <div class="my-btn-group main-btns">
                 <div class="container">
@@ -731,7 +742,7 @@
 
 
             </div>
-
+            <div class="mb-5"></div>
         </div>
         <div v-if="loader" class="loader-wrapper">
             <div class="loader-container">
@@ -750,7 +761,13 @@
                                 @click="modal_color=false"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="range" min="0" max="5" class="form-range" v-model="colored[chosen_detail]">
+                        <div class="range-items">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <input type="range" min="0" max="4" class="form-range" v-model="colored[chosen_detail]">
                         {{ colored[chosen_detail] ? ((colored[chosen_detail] != 5 ? (tr('before') + ' ') : '') + colors[colored[chosen_detail]].label + ' ' + tr('mkm')) : '' }}
                     </div>
                     <div class="modal-footer">
@@ -870,47 +887,47 @@ const translations = {
     monthGuarantee: {
         en: 'Month',
         ru: 'Месяц',
-    },
-    sedan: {
-        en: 'sedan',
-        ru: 'седан',
+    },sedan: {
+        en: 'Sedan',
+        ru: 'Седан',
     },
     coupe: {
-        en: 'coupe',
-        ru: 'купе',
+        en: 'Coupe',
+        ru: 'Купе',
     },
     hatchback: {
-        en: 'hatchback',
-        ru: 'хэтчбэк',
+        en: 'Hatchback',
+        ru: 'Хэтчбэк',
     },
     wagon: {
-        en: 'wagon',
-        ru: 'универсал',
+        en: 'Wagon',
+        ru: 'Универсал',
     },
     crossover: {
-        en: 'crossover',
-        ru: 'кроссовер',
+        en: 'Crossover',
+        ru: 'Кроссовер',
     },
     full: {
-        en: 'full',
-        ru: 'полный',
+        en: 'Full',
+        ru: 'Полный',
     },
     front: {
-        en: 'front',
-        ru: 'передний',
+        en: 'Front',
+        ru: 'Передний',
     },
     rear: {
-        en: 'rear',
-        ru: 'задний',
+        en: 'Rear',
+        ru: 'Задний',
     },
     automatic: {
-        en: 'automatic',
-        ru: 'автоматическая',
+        en: 'Automatic',
+        ru: 'Автоматическая',
     },
     manual: {
-        en: 'manual',
-        ru: 'ручная',
+        en: 'Manual',
+        ru: 'Ручная',
     },
+
     tires: {
         en: 'Tires',
         ru: 'Резина'
@@ -937,7 +954,7 @@ const translations = {
     },
     vehicleInfo: {
         en: 'Vehicle Information',
-        ru: 'информация о ТС'
+        ru: 'Информация о ТС'
     },
     damages: {
         en: 'Damages',
@@ -1070,7 +1087,7 @@ const translations = {
     },
     leather_interior: {
         en: 'Leather interior',
-        ru: 'Кожанный салон',
+        ru: 'Кожаный салон',
     },
     sunroof: {
         en: 'Sunroof',
@@ -1144,138 +1161,91 @@ const translations = {
         en: 'Tow hitch',
         ru: 'Фаркоп'
     },
-    // tire_pressure_sensor: {
-    //     en: 'Tire pressure sensor',
-    //     ru: 'Датчик давления в шинах',
-    // },
-    // cruise_control: {
-    //     en: 'Cruise control',
-    //     ru: 'Круиз-контроль',
-    // },
-    // parking_sensors: {
-    //     en: 'Parking sensors',
-    //     ru: 'Парктроники',
-    // },
-    // camera: {
-    //     en: 'Camera',
-    //     ru: 'Камера',
-    // },
-    // start_stop: {
-    //     en: 'Start-Stop',
-    //     ru: 'Кнопка «Start engine»',
-    // },
-    // leather: {
-    //     en: 'Leather',
-    //     ru: 'Кожаный салон',
-    // },
-    // third_seat_rows: {
-    //     en: 'Third seat rows',
-    //     ru: 'Третий ряд сидений',
-    // },
-    // seats_heating: {
-    //     en: 'Seats heating',
-    //     ru: 'Обогрев сидений',
-    // },
-    // multimedia_lcd_screen: {
-    //     en: 'Multimedia & LCD screen',
-    //     ru: 'Мультимедиа с ЖК-дисплеем',
-    // },
-    // adaptive_cruise_control: {
-    //     en: 'Adaptive Cruise control',
-    //     ru: 'Адаптивный круиз-контроль',
-    // },
-    // camera_360: {
-    //     en: 'Camera 360',
-    //     ru: 'Камеры 360',
-    // },
-    // keyless_entry: {
-    //     en: 'Keyless entry',
-    //     ru: 'Бесключевой доступ',
-    // },
-    // sunroof: {
-    //     en: 'Sunroof',
-    //     ru: 'Люк',
-    // },
-    // panoramic_roof: {
-    //     en: 'Panoramic roof',
-    //     ru: 'Панорамное остекление',
-    // },
-    // electric_seats: {
-    //     en: 'Electric seats',
-    //     ru: 'Электрорегулировка сидений',
-    // },
-    // seats_memory: {
-    //     en: 'Seats memory',
-    //     ru: 'Память положения сидений',
-    // },
-    // steering_wheel_heating: {
-    //     en: 'Steering wheel heating',
-    //     ru: 'Обогрев рулевого колеса',
-    // },
-    // seats_ventilation: {
-    //     en: 'Seats ventilation',
-    //     ru: 'Вентиляция сидений',
-    // },
-    // android_auto_carplay: {
-    //     en: 'Android Auto/CarPlay',
-    //     ru: 'Android Auto/CarPlay',
-    // },
-    // electric_folding_mirrors: {
-    //     en: 'Electric folding mirrors',
-    //     ru: 'Электроскладывание зеркал',
-    // },
-    // electric_trunk_lid: {
-    //     en: 'Electric trunk lid',
-    //     ru: 'Открытие багажника без помощи рук',
-    // },
-    // virtual_dashboard: {
-    //     en: 'Virtual Dashboard',
-    //     ru: 'Виртуальная приборная панель',
-    // },
-    // power_steering: {
-    //     en: 'Power steering',
-    //     ru: 'Электропривод руля',
-    // },
-    // adaptive_lights: {
-    //     en: 'Adaptive lights',
-    //     ru: 'Адаптивный свет',
-    // },
-    // automatic_high_beam: {
-    //     en: 'Automatic high beam',
-    //     ru: 'Автоматический дальний свет',
-    // },
-    // autopilot: {
-    //     en: 'Autopilot',
-    //     ru: 'Автопилот',
-    // },
-    // self_parking: {
-    //     en: 'Self parking',
-    //     ru: 'Автоматическая парковка',
-    // },
-    // seats_ventilation_2: {
-    //     en: 'Seats ventilation',
-    //     ru: 'Вентиляция сидений',
-    // },
-    // seats_massage: {
-    //     en: 'Seats massage',
-    //     ru: 'Массаж сидений',
-    // },
-    // rear_passenger_multimedia_system: {
-    //     en: 'Multimedia system for rear passengers',
-    //     ru: 'Мультимедиа система для задних пассажиров',
-    // },
-    // premium_audio_system: {
-    //     en: 'Premium Audiosystem',
-    //     ru: 'Премиум Аудиосистема',
-    // },
-    // windshield_projection: {
-    //     en: 'Windshield projection',
-    //     ru: 'Проекция на лобовое стекло',
-    // },
-    // door_closers: {
-    //     en: 'Door closers',
-    //     ru: 'Доводчики дверей',
-    // },
+
+    parking_sensors: {
+        en: 'Parking sensors',
+        ru: 'Парктроники',
+    },
+    start_stop: {
+        en: 'Start-Stop',
+        ru: 'Кнопка «Start engine»',
+    },
+    leather: {
+        en: 'Leather',
+        ru: 'Кожаный салон',
+    },
+    third_seat_rows: {
+        en: 'Third seat rows',
+        ru: 'Третий ряд сидений',
+    },
+    seats_heating: {
+        en: 'Seats heating',
+        ru: 'Обогрев сидений',
+    },
+    multimedia_lcd_screen: {
+        en: 'Multimedia & LCD screen',
+        ru: 'Мультимедиа с ЖК-дисплеем',
+    },
+    adaptive_cruise_control: {
+        en: 'Adaptive Cruise control',
+        ru: 'Адаптивный круиз-контроль',
+    },
+    electric_seats: {
+        en: 'Electric seats',
+        ru: 'Электрорегулировка сидений',
+    },
+    seats_memory: {
+        en: 'Seats memory',
+        ru: 'Память положения сидений',
+    },
+    steering_wheel_heating: {
+        en: 'Steering wheel heating',
+        ru: 'Обогрев рулевого колеса',
+    },
+    seats_ventilation: {
+        en: 'Seats ventilation',
+        ru: 'Вентиляция сидений',
+    },
+    electric_trunk_lid: {
+        en: 'Electric trunk lid',
+        ru: 'Открытие багажника без помощи рук',
+    },
+    virtual_dashboard: {
+        en: 'Virtual Dashboard',
+        ru: 'Виртуальная приборная панель',
+    },
+    power_steering: {
+        en: 'Power steering',
+        ru: 'Электропривод руля',
+    },
+    adaptive_lights: {
+        en: 'Adaptive lights',
+        ru: 'Адаптивный свет',
+    },
+    autopilot: {
+        en: 'Autopilot',
+        ru: 'Автопилот',
+    },
+    self_parking: {
+        en: 'Self parking',
+        ru: 'Автоматическая парковка',
+    },
+    seats_ventilation_2: {
+        en: 'Seats ventilation',
+        ru: 'Вентиляция сидений',
+    },
+    seats_massage: {
+        en: 'Seats massage',
+        ru: 'Массаж сидений',
+    },
+    windshield_projection: {
+        en: 'Windshield projection',
+        ru: 'Проекция на лобовое стекло',
+    },
+    premium_audiosystem: {
+        ru: 'Премиальная аудиосистема',
+        en: 'Premium audiosystem'
+    },
 
     crashes: {
         en: 'Crashes',
@@ -1347,7 +1317,7 @@ const translations = {
     },
     hoodback: {
         en: 'Hood Back',
-        ru: 'Задний капот',
+        ru: 'Задний бампер',
     },
     trunk: {
         en: 'Trunk',
@@ -1426,6 +1396,7 @@ export default {
             guarantee: {
                 year: '',
                 month: '',
+                mileage: '',
             },
             tyre: {
                 manufacturer: '',
@@ -1446,7 +1417,7 @@ export default {
             video: null,
             price: {
                 value: '',
-                currency: '',
+                currency: 'AED',
             },
 
             next: false,
@@ -1454,31 +1425,26 @@ export default {
             colors: {
                 0: {
                     value: 0,
-                    label: 0,
-                    color: '#fff0',
+                    label: 100,
+                    color: '##fff0',
                 },
                 1: {
                     value: 1,
-                    label: 100,
-                    color: '#FDFED5',
-                },
-                2: {
-                    value: 2,
                     label: 300,
                     color: '#F2F008',
                 },
-                3: {
-                    value: 3,
+                2: {
+                    value: 2,
                     label: 500,
                     color: '#FFD029',
                 },
-                4: {
-                    value: 4,
+                3: {
+                    value: 3,
                     label: 800,
                     color: '#ff8629',
                 },
-                5: {
-                    value: 5,
+                4: {
+                    value: 4,
                     label: 1000 + '+',
                     color: '#CC120C',
                 },
@@ -1627,128 +1593,164 @@ export default {
                     value: false,
                 },
             ],
-            equipment: [
-                {
-                    name: 'tire_pressure_sensor',
-                    value: false,
-                },
-                {
-                    name: 'adaptive_light',
-                    value: false,
-                },
-                {
-                    name: 'automatic_high_beam',
-                    value: false,
-                },
-                {
-                    name: 'tow_hitch',
-                    value: false,
-                },
-                {
-                    name: 'cruise_control',
-                    value: false,
-                },
-                {
-                    name: 'parking_assistance_system',
-                    value: false,
-                },
-                {
-                    name: 'camera',
-                    value: false,
-                },
-                {
-                    name: 'camera_360',
-                    value: false,
-                },
-                {
-                    name: 'head_up_display',
-                    value: false,
-                },
-                {
-                    name: 'hands_free_trunk_opening',
-                    value: false,
-                },
-                {
-                    name: 'digital_instrument_panel',
-                    value: false,
-                },
-                {
-                    name: 'keyless_entry',
-                    value: false,
-                },
-                {
-                    name: 'electric_folding_mirrors',
-                    value: false,
-                },
-                {
-                    name: 'start_stop_system',
-                    value: false,
-                },
-                {
-                    name: 'leather_interior',
-                    value: false,
-                },
-                {
-                    name: 'sunroof',
-                    value: false,
-                },
-                {
-                    name: 'panoramic_roof',
-                    value: false,
-                },
-                {
-                    name: 'heated_steering_wheel',
-                    value: false,
-                },
-                {
-                    name: 'third_row_of_seats',
-                    value: false,
-                },
-                {
-                    name: 'electric_seat_adjustment',
-                    value: false,
-                },
-                {
-                    name: 'seat_position_memory',
-                    value: false,
-                },
-                {
-                    name: 'heated_seats',
-                    value: false,
-                },
-                {
-                    name: 'ventilated_seats',
-                    value: false,
-                },
-                {
-                    name: 'premium_audio_system',
-                    value: false,
-                },
-                {
-                    name: 'rear_passenger_multimedia_system',
-                    value: false,
-                },
-                {
-                    name: 'navigation_system',
-                    value: false,
-                },
-                {
-                    name: 'android_auto_carplay',
-                    value: false,
-                },
-                {
-                    name: 'power_outlet_220v',
-                    value: false,
-                },
-                {
-                    name: 'seat_massage',
-                    value: false,
-                },
-                {
-                    name: 'door_closers',
-                    value: false,
-                },
-            ],
+            equipment:  {
+                tire_pressure_sensor: false,
+                cruise_control: false,
+                parking_sensors: false,
+                camera: false,
+                start_stop: false,
+                leather: false,
+                third_seat_rows: false,
+                seats_heating: false,
+                multimedia_lcd_screen: false,
+                adaptive_cruise_control: false,
+                camera_360: false,
+                keyless_entry: false,
+                sunroof: false,
+                panoramic_roof: false,
+                electric_seats: false,
+                seats_memory: false,
+                steering_wheel_heating: false,
+                seats_ventilation: false,
+                android_auto_carplay: false,
+                electric_folding_mirrors: false,
+                electric_trunk_lid: false,
+                virtual_dashboard: false,
+                power_steering: false,
+                adaptive_lights: false,
+                automatic_high_beam: false,
+                autopilot: false,
+                self_parking: false,
+                premium_seats_ventilation: false,
+                seats_massage: false,
+                multimedia_system_rear_passengers: false,
+                premium_audiosystem: false,
+                windshield_projection: false,
+                door_closers: false,
+
+            },
+            // equipment: [
+            //     {
+            //         name: 'tire_pressure_sensor',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'adaptive_light',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'automatic_high_beam',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'tow_hitch',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'cruise_control',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'parking_assistance_system',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'camera',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'camera_360',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'head_up_display',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'hands_free_trunk_opening',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'digital_instrument_panel',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'keyless_entry',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'electric_folding_mirrors',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'start_stop_system',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'leather_interior',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'sunroof',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'panoramic_roof',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'heated_steering_wheel',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'third_row_of_seats',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'electric_seat_adjustment',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'seat_position_memory',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'heated_seats',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'ventilated_seats',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'premium_audio_system',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'rear_passenger_multimedia_system',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'navigation_system',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'android_auto_carplay',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'power_outlet_220v',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'seat_massage',
+            //         value: false,
+            //     },
+            //     {
+            //         name: 'door_closers',
+            //         value: false,
+            //     },
+            // ],
             brands: [],
             tyreBrands: [],
             reportTimeout: null,
@@ -1821,9 +1823,10 @@ export default {
             // reportData.equipment.forEach(el => {
             //     this.equipment[this.equipment.findIndex(e => e.name == el.name)].value = el.value
             // })
-            reportData.equipment.forEach(el => {
-                this.equipment[this.equipment.findIndex(e => e.name == el.name)].value = el.value
-            })
+            Object.entries(reportData.equipment).forEach(([key, value]) => {
+                this.equipment[key] = value;
+            });
+
 
         })
             .catch(error => {
@@ -1931,7 +1934,8 @@ export default {
                 guarantee_check: this.guarantee_check,
                 guarantee: {
                     year: this.guarantee.year,
-                    month: this.guarantee.month
+                    month: this.guarantee.month,
+                    mileage: this.guarantee.mileage
                 },
                 tyre: {
                     manufacturer: this.tyre.manufacturer,
@@ -2008,12 +2012,13 @@ export default {
                 }
                 this.model = info['Model']
                 this.year = info['Model Year']
+                this.engine_volume = info['Engine Displacement (ccm)'] / 1000
                 console.log(info['Transmission'])
             })
         },
 
         //todo сделать ввод файлов
-        previewFiles(event) {
+        previewFile(event) {
             this.loader = true;
             const formData = new FormData();
             formData.append('file', event.target.files[0]);
@@ -2063,6 +2068,49 @@ export default {
 
 
         },
+
+        previewFiles(event) {
+            this.loader = true;
+
+            const uploadedFiles = event.target.files;
+            const uploadedFileData = [];
+
+            const processFile = (file, index) => {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                axios.post(base_url + 'uploadFile', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(response => {
+                    console.log(response.data);
+                    const reader = new FileReader();
+                    let id = response.data.id;
+
+                    reader.onload = (e) => {
+                        uploadedFileData.push({ photo: id, preview: e.target.result });
+
+                        if (uploadedFileData.length === uploadedFiles.length) {
+                            this[event.target.getAttribute('data-field')] = this[event.target.getAttribute('data-field')].concat(uploadedFileData);
+                        }
+                    };
+
+                    reader.readAsDataURL(file);
+                }).catch(error => {
+                    console.log(error.response.data);
+                }).finally(() => {
+                    if (index === uploadedFiles.length - 1) {
+                        this.loader = false;
+                    }
+                });
+            };
+
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                processFile(uploadedFiles[i], i);
+            }
+        },
+
         validate(){
             this.errors = []
             if (!this.photo_vin.photo) this.errors.push(this.tr('photo_vin'));
@@ -2082,7 +2130,7 @@ export default {
             // if (this.crashes === undefined) this.errors.push(this.tr('crashes'));
             if (this.guarantee_check) {
                 if (!this.guarantee.year) this.errors.push(this.tr('guarantee') + this.tr('yearGuarantee'));
-                if (!this.guarantee.month) this.errors.push(this.tr('guarantee') + this.tr('monthGuarantee'));
+                // if (!this.guarantee.month) this.errors.push(this.tr('guarantee') + this.tr('monthGuarantee'));
             }
             if(!this.price.currency) this.errors.push(this.tr('currency'));
             if (!this.price.value) this.errors.push(this.tr('price'))
@@ -2227,6 +2275,38 @@ export default {
 :root {
     --bs-primary: red !important;
 }
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px;
+    height: 30px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+input[type='range']::-ms-thumb {
+    width: 30px;
+    height: 30px;
+    background: #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* bootstrap.min.css | https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css */
+
+.form-range {
+    /* height: 1.5rem; */
+    height: 2.5rem;
+}
+
 
 </style>
 <style lang="sass">
@@ -2235,6 +2315,19 @@ $primary-op: #4E2EE120
 $primary-dark: #2E2cE1
 $form-file-button-bg: rgba(74, 48, 217, 0.05)
 $form-file-button-color: rgba(74, 48, 217)
+
+.range-items
+    display: flex
+    width: 100%
+    padding: 0 3.4%
+    *
+        width: 25%
+        border-left: 1px solid black
+        height: 10px
+
+        &:last-child
+            border-right: 1px solid black
+
 
 .main-btns
     position: fixed
@@ -2246,9 +2339,6 @@ $form-file-button-color: rgba(74, 48, 217)
     width: 100%
     .btn
         line-height: 120%
-
-body
-    padding-bottom: 6rem !important
 
 .form-control::file-selector-button
     background-color: $primary-op
