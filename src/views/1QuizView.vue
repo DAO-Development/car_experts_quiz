@@ -24,7 +24,7 @@
                     <label class="form-label">{{ tr('vin') }}</label>
                     <input type="file" class=" col-md-9 form-control" accept="image/*" @change="previewFile"
                            data-field="photo_vin" data-subfield="photo">
-                    <img class="preview-image" v-if="photo_vin.preview" :src="photo_vin.preview"
+                    <img class="preview-image mb-3" v-if="photo_vin.preview" :src="photo_vin.preview"
                          alt="Preview Image"/>
                     <div class="d-flex gap-3">
                         <input v-model="vin" type="text" class="form-control">
@@ -32,7 +32,30 @@
                     </div>
                 </div>
 
-                <div class="row g-3 mt-3">
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="crashes-title">
+                                <label class="form-label">{{ tr('crashes') }}</label>
+                                <button class="btn crashes-btn copy d-flex gap-2 align-items-center" @click="copyVin">
+                                    <span v-if="copiedVin">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M21 7.00009L9 19.0001L3.5 13.5001L4.91 12.0901L9 16.1701L19.59 5.59009L21 7.00009Z" fill="#bbb"/>
+                                        </svg>
+                                    </span>
+                                    {{ tr('copyVin') }}
+                                </button>
+                                <button class="btn crashes-btn" @click="openCheckModal">
+                                    {{ tr('check') }}
+                                </button>
+                            </div>
+
+                            <select v-model="crashes" name="" class="form-select">
+                                <option :value="1">{{ tr('yes') }}</option>
+                                <option :value="0">{{ tr('no') }}</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">{{ tr('brand') }}</label>
@@ -134,15 +157,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="form-label">{{ tr('crashes') }}</label>
-                            <select v-model="crashes" name="" class="form-select">
-                                <option :value="1">{{ tr('yes') }}</option>
-                                <option :value="0">{{ tr('no') }}</option>
-                            </select>
-                        </div>
-                    </div>
+
                     <div class="col-md-3">
                         <div class="form-group py-1 my-3 form-switch form-check">
                             <label for="guarantee" class="form-label">{{ tr('guarantee') }}</label>
@@ -174,7 +189,31 @@
 
             </div>
             <h2>{{ tr('tires') }}</h2>
-            <div class="row">
+            <div class=" ">
+
+                <div class="form-group py-1 my-3 form-switch form-check d-flex gap-3">
+                    <input type="checkbox" v-model="tire_similar" id="tire_similar" :checked="tire_similar"
+                           class="form-check-input m-1">
+                    <label for="tire_similar" class="form-label">{{ tr('similar') }}</label>
+
+                </div>
+                <div class="tires-choice mb-3" v-if="!tire_similar">
+                    <svg width="166" height="358" viewBox="0 0 166 358" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M82.7344 2V18.0098M82.7344 2C95.6585 2.83745 105.787 4.12931 114.754 6.3525M82.7344 2C69.8103 2.83745 59.6821 4.12931 50.7147 6.3525M150.987 23.0656C154.86 25.5934 157.781 34.8015 157.728 50.0295M150.987 23.0656C145.626 19.5666 140.686 16.6407 135.82 14.187M150.987 23.0656H122.338M157.728 50.0295H137.505M157.728 50.0295C161.098 50.0295 164.469 50.8721 164.469 54.2426V109.013C164.469 110.698 161.941 112.384 157.728 112.384M137.505 50.0295C133.292 50.0295 130.764 51.7147 130.764 54.2426V81.6279M137.505 50.0295L122.338 23.0656M157.728 112.384H137.505C131.607 112.384 130.764 110.698 130.764 109.013V103.957M157.728 112.384V249.731M157.728 249.731H137.505C136.215 249.731 135.084 249.889 134.134 250.18M157.728 249.731C161.098 249.731 164.469 250.574 164.469 253.944V308.715C164.469 310.4 161.941 312.085 157.728 312.085M157.728 312.085H137.505C131.607 312.085 130.764 310.4 130.764 308.715V281.329M157.728 312.085C157.728 326.41 157.229 332.581 151.829 341.577C149.302 345.788 115.092 357.047 82.7344 356.744M82.7344 356.744V279.223M82.7344 356.744C50.3772 357.047 16.1672 345.788 13.6393 341.577C8.23953 332.581 7.74098 326.41 7.74098 312.085M130.764 81.6279L82.7344 79.5213M130.764 81.6279V103.957M82.7344 79.5213V97.2164M82.7344 79.5213V18.0098M82.7344 79.5213L34.7049 81.6279M130.764 281.329L82.7344 279.223M130.764 281.329V274.167M82.7344 279.223V234.564M82.7344 279.223L34.7049 281.329M82.7344 279.223C56.1849 278.831 43.5258 278.155 34.7049 274.167M82.7344 279.223C106.406 278.783 118.142 278.06 130.764 274.167M82.7344 105.643C119.979 108.778 135.072 113.411 148.459 128.393C150.987 131.223 150.695 143.565 145.088 153.672C141.718 159.748 139.709 161.58 130.764 157.885C116.484 151.987 104.889 151.201 82.7344 151.987M82.7344 105.643V151.987M82.7344 105.643V97.2164M82.7344 105.643C45.4899 108.778 30.3966 113.411 17.0098 128.393C14.482 131.223 14.7739 143.565 20.3803 153.672C23.7508 159.748 25.7594 161.58 34.7049 157.885C48.9851 151.987 60.58 151.201 82.7344 151.987M82.7344 151.987V234.564M82.7344 234.564H134.134V250.18M82.7344 234.564H31.3344V250.18M134.134 250.18C131.981 250.842 130.764 252.19 130.764 253.944V274.167M135.82 14.187C127.167 14.8944 124.593 17.1475 122.338 23.0656M135.82 14.187C128.971 10.7339 122.271 8.21601 114.754 6.3525M130.764 103.957C112.745 99.6711 102.284 98.054 82.7344 97.2164M82.7344 97.2164C63.1845 98.054 52.7242 99.6711 34.7049 103.957M82.7344 18.0098C116.568 18.7443 135.82 11.5751 114.754 6.3525M82.7344 18.0098C48.9009 18.7443 29.6492 11.5751 50.7147 6.3525M14.482 23.0656C10.6092 25.5934 7.6883 34.8015 7.74098 50.0295M14.482 23.0656C19.8424 19.5666 24.783 16.6407 29.6492 14.187M14.482 23.0656H43.1311M7.74098 50.0295H27.9639M7.74098 50.0295C4.37049 50.0295 1 50.8721 1 54.2426V109.013C1 110.698 3.52787 112.384 7.74098 112.384M27.9639 50.0295C32.177 50.0295 34.7049 51.7147 34.7049 54.2426V81.6279M27.9639 50.0295L43.1311 23.0656M7.74098 112.384H27.9639C33.8623 112.384 34.7049 110.698 34.7049 109.013V103.957M7.74098 112.384V249.731M7.74098 249.731H27.9639C29.2533 249.731 30.3849 249.889 31.3344 250.18M7.74098 249.731C4.37049 249.731 1 250.574 1 253.944V308.715C1 310.4 3.52787 312.085 7.74098 312.085M7.74098 312.085H27.9639C33.8623 312.085 34.7049 310.4 34.7049 308.715V281.329M34.7049 81.6279V103.957M34.7049 281.329V274.167M31.3344 250.18C33.4875 250.842 34.7049 252.19 34.7049 253.944V274.167M29.6492 14.187C38.302 14.8944 40.8753 17.1475 43.1311 23.0656M29.6492 14.187C36.4973 10.7339 43.1982 8.21601 50.7147 6.3525M154.357 139.348C154.164 191.768 156.079 233.869 148.459 239.62C142.887 226.256 144.344 212.604 145.088 190.748C145.892 167.154 149.274 157.431 154.357 139.348ZM11.1115 139.348C11.3047 191.768 9.38994 233.869 17.0098 239.62C22.5814 226.256 21.1248 212.604 20.3803 190.748C19.5767 167.154 16.1951 157.431 11.1115 139.348Z" stroke="#222222" stroke-width="2"/>
+                        <path @click="addAnotherTire('front_left')" d="M7.74098 50.0295H27.9639C32.177 50.0295 34.7049 51.7147 34.7049 54.2426V81.6278V103.957V109.013C34.7049 110.698 33.8623 112.384 27.9639 112.384H7.74098C3.52787 112.384 1 110.698 1 109.013V54.2426C1 50.8721 4.37049 50.0295 7.74098 50.0295Z" fill="#4E2EE1" fill-opacity="0.125" stroke="#482CD9" stroke-width="2"/>
+                        <path @click="addAnotherTire('front_right')" d="M7.74098 249.731H27.9639C32.177 249.731 34.7049 251.416 34.7049 253.944V281.33V303.659V308.715C34.7049 310.4 33.8623 312.085 27.9639 312.085H7.74098C3.52787 312.085 1 310.4 1 308.715V253.944C1 250.574 4.37049 249.731 7.74098 249.731Z" fill="#4E2EE1" fill-opacity="0.125" stroke="#482CD9" stroke-width="2"/>
+                        <path @click="addAnotherTire('back_left')" d="M157.728 50.0295H137.505C133.292 50.0295 130.764 51.7147 130.764 54.2426V81.6278V103.957V109.013C130.764 110.698 131.606 112.384 137.505 112.384H157.728C161.941 112.384 164.469 110.698 164.469 109.013V54.2426C164.469 50.8721 161.098 50.0295 157.728 50.0295Z" fill="#4E2EE1" fill-opacity="0.125" stroke="#482CD9" stroke-width="2"/>
+                        <path @click="addAnotherTire('back_right')" d="M157.728 249.731H137.505C133.292 249.731 130.764 251.416 130.764 253.944V281.33V303.659V308.715C130.764 310.4 131.606 312.085 137.505 312.085H157.728C161.941 312.085 164.469 310.4 164.469 308.715V253.944C164.469 250.574 161.098 249.731 157.728 249.731Z" fill="#4E2EE1" fill-opacity="0.125" stroke="#482CD9" stroke-width="2"/>
+                    </svg>
+
+                </div>
+            </div>
+            <div class="row mb-3" v-for="(tyre, tyre_name) in tires" :key="tyre">
+                <div class="col-12">
+                    <h3>
+                        {{ tr(tyre_name) }}
+                    </h3>
+                </div>
                 <div class="col-md-4 col-6">
                     <div class="form-group">
                         <div class="form-group">
@@ -198,12 +237,69 @@
                         <input v-model="tyre.year" type="text" class="form-control">
                     </div>
                 </div>
+
+                <div class="col-md-4 col-6">
+                    <div class="form-group py-1 my-3 form-switch form-check d-flex gap-3">
+                        <input type="checkbox" v-model="tyre.condition" id="tire_similar" :checked="tyre.condition"
+                               class="form-check-input m-1">
+                        <label for="tire_similar" class="form-label">{{ tr('normal') }}</label>
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-12" v-if="!tyre.condition">
+                    <div class="form-group">
+                        <label class="form-label">{{ tr('wearPhoto') }}</label>
+                        <input type="file" class="form-control" accept="image/*" @change="previewFile"
+                               data-field="tires" data-subfield="photo" :data-index="tyre_name">
+                        <img class="preview-image" v-if="tyre.preview" :src="tyre.preview" alt="Preview Image"/>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <button class="mt-3 btn btn-secondary" @click="deleteAnotherTire(tyre_name)">
+                        {{tr('delete')}}
+                    </button>
+                </div>
+            </div>
+            <div class="row" >
+                <h3 v-if="!tire_similar">{{ tr('another' )}}</h3>
+                <div class="col-md-4 col-6">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label class="form-label">{{ tr('manufacturer') }}</label>
+                            <select v-model="tyre.manufacturer" name="" class="form-select">
+                                <option :value="b" v-for="b in tyreBrands" :key="b">{{ b }}</option>
+                                <option value="another">{{ tr('otherBrand') }}</option>
+                            </select>
+                        </div>
+                        <div
+                            v-if="tyre.manufacturer && (tyre.manufacturer === 'another' || !tyreBrands.includes(tyre.manufacturer))">
+                            <label for="another-option">{{ tr('enterAnotherOption') }}</label>
+                            <input class="form-control" type="text" :value="customTyreBrand"
+                                   @input="tyre.manufacturer = $event.target.value">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ tr('year') }}</label>
+                        <input v-model="tyre.year" type="text" class="form-control">
+                    </div>
+                </div>
+
                 <div class="col-md-4 col-12">
                     <div class="form-group">
                         <label class="form-label">{{ tr('wearPhoto') }}</label>
                         <input type="file" class="form-control" accept="image/*" @change="previewFile"
                                data-field="tyre" data-subfield="photo">
                         <img class="preview-image" v-if="tyre.preview" :src="tyre.preview" alt="Preview Image"/>
+                    </div>
+                </div>
+                <div class="col-md-4 col-12">
+                    <div class="form-group py-1 my-3 form-switch form-check d-flex gap-3">
+                        <input type="checkbox" v-model="tyre.condition" id="tire_similar" :checked="tyre.condition"
+                               class="form-check-input m-1">
+                        <label for="tire_similar" class="form-label">{{ tr('normal') }}</label>
+
                     </div>
                 </div>
             </div>
@@ -637,50 +733,64 @@
             <input type="file" multiple class="form-control" accept="image/*" @change="previewFiles"
                    data-field="photo_external" :data-index="i" data-subfield="photo">
 
-            <h2>{{ tr('equipment') }}</h2>
-<!--            <div class="row g-2">-->
-<!--                <div class="col-md-4" v-for="item in equipment" :key="item.name">-->
-<!--                    <div class="form-group my-chip">-->
-<!--                        <input class="form-check-input mx-1" type="checkbox" v-model="item.value" :id="item.name">-->
-<!--                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-                        <div class="fw-semibold mb-3">Basic option</div>
-                        <div class="row g-2">
-                            <div class="col-md-4" v-for="item in equipment_basic" :key="item.name">
-                                <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
-                                    <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
-                                    <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
-                                </div>
-                                <div v-else class="">{{ item.name }}</div>
-                            </div>
-                        </div>
-                        <div class="fw-semibold mb-3">Medium option</div>
-                        <div class="row g-2">
-                            <div class="col-md-4" v-for="item in equipment_medium" :key="item.name">
-                                <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
-                                    <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
-                                    <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
-                                </div>
-                                <div v-else class="">{{ item.name }}</div>
-                            </div>
-                        </div>
-                        <div class="fw-semibold mb-3">Premium option</div>
-                        <div class="row g-2">
-                            <div class="col-md-4" v-for="item in equipment_premium" :key="item.name">
-                                <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
-                                    <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
-                                    <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
-                                </div>
-                                <div v-else class="">{{ item.name }}</div>
-                            </div>
-                        </div>
+
+            <div class="d-md-flex mb-3">
+                <h2>{{ tr('equipment') }}</h2>
+
+                <div class="equipment-tabs mb-md-3 mb-4 mt-md-4 mt-3 ms-md-auto">
+                    <div class="equipment-tabs__item" :class="{'active' : chosen_equipment_tab=='basic' }" @click="chosen_equipment_tab='basic'">Basic </div>
+                    <div class="equipment-tabs__item" :class="{'active' : chosen_equipment_tab=='medium' }" @click="chosen_equipment_tab='medium'">Medium </div>
+                    <div class="equipment-tabs__item" :class="{'active' : chosen_equipment_tab=='premium' }" @click="chosen_equipment_tab='premium'">Premium </div>
+                </div>
+            </div>
+
+            <div class="" v-if="chosen_equipment_tab=='basic'">
+                <div class="row g-2">
+                <div class="col-md-4" v-for="item in equipment_basic" :key="item.name">
+                    <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
+                        <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
+                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
+                    </div>
+                    <div v-else class="">{{ item.name }}</div>
+                </div>
+            </div>
+            </div>
+            <div class="" v-if="chosen_equipment_tab=='medium'">
+
+                <div class="row g-2">
+                <div class="col-md-4" v-for="item in equipment_medium" :key="item.name">
+                    <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
+                        <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
+                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
+                    </div>
+                    <div v-else class="">{{ item.name }}</div>
+                </div>
+            </div>
+            </div>
+            <div class="" v-if="chosen_equipment_tab=='premium'">
+
+                <div class="row g-2">
+                <div class="col-md-4" v-for="item in equipment_premium" :key="item.name">
+                    <div class="form-group my-chip" v-if="equipment[item.name] !== undefined">
+                        <input class="form-check-input mx-1" type="checkbox" v-model="equipment[item.name]" :id="item.name">
+                        <label :for="item.name" class="form-label">{{ tr(item.name) }}</label>
+                    </div>
+                    <div v-else class="">{{ item.name }}</div>
+                </div>
+            </div>
+            </div>
+            <h2>{{ tr('computer_diagnostics') }}</h2>
+            <div class="col-md-6">
+                <input type="file" class="form-control" accept=".pdf" @change="previewFile"
+                       data-field="computer_diag">
+            </div>
+            <h2>{{ tr('comment') }}</h2>
+            <textarea v-model="comment" class="form-control" rows="5"></textarea>
 
             <h2>{{ tr('functionality') }}</h2>
             <div class="row">
                 <div class="col-md-3">
-                    <div class="form-group py-1">
+                    <div class="form-group py-1 form-switch d-flex gap-3 align-items-center">
                         <label for="functions_check" class="form-label">{{ tr('everything_works') }}</label>
                         <input class="form-check-input mx-1" type="checkbox" v-model="functions_check"
                                id="functions_check">
@@ -695,9 +805,10 @@
                 </div>
             </div>
 
-            <h2>{{ tr('comment') }}</h2>
-            <textarea v-model="comment" class="form-control" rows="5"></textarea>
-
+            <h2>{{ tr('video_report') }}</h2>
+            <div class="col-md-6">
+                <input type="file" class="form-control" accept="video/*" @change="previewFile" data-field="video">
+            </div>
 
             <h2>{{ tr('price') }}</h2>
             <div class="row">
@@ -720,16 +831,8 @@
                 </div>
             </div>
 
-            <h2>{{ tr('computer_diagnostics') }}</h2>
-            <div class="col-md-6">
-                <input type="file" class="form-control" accept=".pdf" @change="previewFile"
-                       data-field="computer_diag">
-            </div>
 
-            <h2>{{ tr('video_report') }}</h2>
-            <div class="col-md-6">
-                <input type="file" class="form-control" accept="video/*" @change="previewFile" data-field="video">
-            </div>
+
             <div class="my-btn-group main-btns">
                 <div class="container">
                     <div class="d-flex gap-3">
@@ -797,6 +900,26 @@
             </div>
         </div>
 
+        <div class="modal" :class="{'show d-block' : modals.check}" tabindex="-1" @click="closeCheckModal">
+            <div class="modal-dialog" @click.stop="">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{ tr('local_base') }}</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="border rounded-3 d-flex justify-content-between align-items-center p-3">
+                            <span>{{ tr('local_base')}}</span>
+                            <a href="" class="btn btn-primary">{{ tr('goto')}}</a>
+                        </div>
+                        <div class=" mt-2 border rounded-3 d-flex justify-content-between align-items-center p-3">
+                            <img src="../assets/vinfax.png" alt="">
+                            <a href="" class="btn btn-primary">{{ tr('goto')}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -808,6 +931,64 @@ import sha1 from 'js-sha1';
 const base_url = 'https://carexpertsnew.ffox.site/api/'
 
 const translations = {
+
+    delete: {
+        en: 'Delete',
+        ru: 'Удалить'
+    },
+    another: {
+        en: 'another',
+        ru: 'Остальные'
+    },
+
+    back_right: {
+        en: 'Back right',
+        ru: 'Заднее правое'
+    },
+
+    back_left: {
+        en: 'Back left',
+        ru: 'Заднее левое'
+    },
+
+    front_right: {
+        en: 'Front right',
+        ru: 'Переднее правое'
+    },
+
+    front_left: {
+        en: 'Front left',
+        ru: 'Переднее левое'
+    },
+
+    normal: {
+        en: 'Normal',
+        ru: 'В норме'
+    },
+    similar: {
+        en: 'Similar',
+        ru: 'Все одинаковые'
+    },
+    check: {
+        en: 'Check',
+        ru: 'Проверить'
+    },
+    copyVin: {
+        en: 'Copy VIN',
+        ru: 'Копировать VIN'
+    },
+    choose: {
+        en: 'Choose',
+        ru: 'Выберите'
+    },
+    local_base: {
+        en: 'Local base',
+        ru: 'Местная база'
+    },
+    goto: {
+        en: 'GO',
+        ru: 'ПЕРЕЙТИ'
+    },
     title: {
         en: 'Car report',
         ru: 'Отчет по автомобилю',
@@ -1370,6 +1551,7 @@ export default {
     name: "QuizView",
     data() {
         return {
+            chosen_equipment_tab: 'medium',
             lang: 'en',
             master: {
                 name: '',
@@ -1398,10 +1580,16 @@ export default {
                 month: '',
                 mileage: '',
             },
+            tire_similar: true,
+
+            tires: {
+
+            },
             tyre: {
                 manufacturer: '',
                 year: '',
                 photo: null,
+                condition: true,
             },
             customTyreBrand: '',
 
@@ -1629,131 +1817,14 @@ export default {
                 door_closers: false,
 
             },
-            // equipment: [
-            //     {
-            //         name: 'tire_pressure_sensor',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'adaptive_light',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'automatic_high_beam',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'tow_hitch',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'cruise_control',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'parking_assistance_system',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'camera',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'camera_360',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'head_up_display',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'hands_free_trunk_opening',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'digital_instrument_panel',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'keyless_entry',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'electric_folding_mirrors',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'start_stop_system',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'leather_interior',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'sunroof',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'panoramic_roof',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'heated_steering_wheel',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'third_row_of_seats',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'electric_seat_adjustment',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'seat_position_memory',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'heated_seats',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'ventilated_seats',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'premium_audio_system',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'rear_passenger_multimedia_system',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'navigation_system',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'android_auto_carplay',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'power_outlet_220v',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'seat_massage',
-            //         value: false,
-            //     },
-            //     {
-            //         name: 'door_closers',
-            //         value: false,
-            //     },
-            // ],
             brands: [],
             tyreBrands: [],
             reportTimeout: null,
+            copiedVin: false,
+
+            modals: {
+                check: false
+            }
         }
     },
 
@@ -1848,6 +1919,35 @@ export default {
     },
 
     methods: {
+
+        addAnotherTire(tire){
+            if (!this.tires[tire]) {
+                this.tires[tire] = {
+                    manufacturer: this.tyre.manufacturer,
+                    year: this.tyre.year,
+                    photo: null,
+                    condition: true,
+                }
+            }
+        },
+
+        deleteAnotherTire(tire){
+            delete this.tires[tire]
+        },
+
+        openCheckModal(){
+            this.modals.check = true
+        },
+        closeCheckModal(){
+            this.modals.check = false
+        },
+        copyVin(){
+            navigator.clipboard.writeText(this.vin)
+            this.copiedVin = true
+            setTimeout(() => {
+                this.copiedVin = false
+            }, 2000)
+        },
         transformArrayToObject(array) {
             const obj = {};
             for (let i = 0; i < array.length; i++) {
@@ -1940,8 +2040,10 @@ export default {
                 tyre: {
                     manufacturer: this.tyre.manufacturer,
                     year: this.tyre.year,
+                    condition: this.tyre.condition,
                     photo: this.tyre.photo
                 },
+                tires: this.tires,
                 customTyreBrand: this.customTyreBrand,
                 colored: this.colored,
                 photo_external_damage: this.photo_external_damage.map(photo => {
@@ -2272,6 +2374,48 @@ export default {
 }
 </script>
 <style>
+
+/* bootstrap.min.css | https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css */
+
+.form-switch .form-check-input {
+    /* width: 2em; */
+    width: 3em;
+}
+
+.form-check-input {
+    /* height: 1em; */
+    height: 1.5em;
+}
+
+/* bootstrap.min.css | https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css */
+
+.form-switch .form-check-input {
+    /* width: 2em; */
+    width: 3em;
+}
+
+.form-check-input {
+    /* height: 1em; */
+    height: 1.5em;
+    outline: none !important;
+}
+
+.form-check-input:checked[type="checkbox"] {
+    /* --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e"); */
+}
+
+.form-switch .form-check-input:checked {
+    /* --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e"); */
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2342d'/%3e%3c/svg%3e");
+}
+
+.form-check-input:checked {
+    /* background-color: #0d6efd; */
+    /* border-color: #0d6efd; */
+    background-color: #4E2EE120;
+    border-color: #4E2EE120;
+}
+
 :root {
     --bs-primary: red !important;
 }
@@ -2315,6 +2459,57 @@ $primary-op: #4E2EE120
 $primary-dark: #2E2cE1
 $form-file-button-bg: rgba(74, 48, 217, 0.05)
 $form-file-button-color: rgba(74, 48, 217)
+.equipment-tabs
+    background: rgba(78, 46, 225, 0.125)
+    border: 1px solid #482CD9
+    border-radius: 5px
+    padding: 4px
+    display: flex
+    gap: 1rem
+    width: fit-content
+    height: fit-content
+
+
+    &__item
+        min-width: 90px
+        border-radius: 5px
+        padding: 2px 8px 4px
+        transition: .3s
+        color: #482CD9
+        text-align: center
+        cursor: pointer
+
+        &.active
+            color: white
+            background: #482CD9
+
+
+.tires-choice
+    display: grid
+    place-items: center
+
+.modal
+    background: #0009
+.crashes-title
+    align-items: center
+    display: flex
+    gap: 1rem
+
+
+    .crashes-btn
+        background: none
+        outline: none
+        border: none
+        color: #B7B7B7
+
+        font-size: 14px
+        font-weight: 400
+        line-height: 24px
+        letter-spacing: 0em
+        text-align: left
+
+        &.copy
+            margin-left: auto
 
 .range-items
     display: flex

@@ -698,6 +698,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -890,6 +891,10 @@ export default {
             brands: [],
             tyreBrands: [],
             reportTimeout: null,
+
+            modals: {
+                check: false
+            }
         }
     },
 
@@ -980,7 +985,12 @@ export default {
     },
 
     methods: {
-
+        openCheckModal(){
+            this.modals.check = true
+        },
+        closeCheckModal(){
+            this.modals.check = false
+        },
         saveReport() {
             this.loader = true
             axios.put(base_url + 'reports/save', this.getReportData()).then(() => {
