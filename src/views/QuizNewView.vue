@@ -30,7 +30,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <button class="btn btn-primary w-100 mt-3" @click="next=true">
+                        <button class="btn btn-primary w-100 mt-md-0 mt-3" @click="next=true">
                             {{ tr('next') }}
                         </button>
                     </div>
