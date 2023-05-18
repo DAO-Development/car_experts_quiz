@@ -560,8 +560,8 @@
                         <img class="preview-image" v-if="tyre.preview" :src="tyre.preview" alt="Preview Image"/>
                     </div>
                 </div>
-                <div class="col-md-4 col-6 pt-md-2">
-                    <button class="btn btn-secondary mt-md-4" @click="deleteAnotherTire(tyre_name)">
+                <div class="col-md-4 col-6">
+                    <button class="btn btn-secondary " @click="deleteAnotherTire(tyre_name)">
                         {{ tr('delete') }}
                     </button>
                 </div>
@@ -1069,8 +1069,8 @@
                 <input id="photo_dashboard" type="file"  class="d-none form-control" accept="image/*"
                        @change="previewFile"
                        data-field="photo_dashboard" data-subfield="photo">
-                <img class="preview-image" v-if="photo_dashboard.preview" :src="photo_dashboard.preview"
-                     alt="Preview Image"/>
+<!--                <img class="preview-image" v-if="photo_dashboard.preview" :src="photo_dashboard.preview"-->
+<!--                     alt="Preview Image"/>-->
 
             </div>
 
@@ -1202,8 +1202,9 @@
             </div>
 
             <h3 class="mt-3">{{ tr('video_report') }}</h3>
-            <div class="col-md-6">
+            <div class="d-md-flex align-items-center gap-3">
                 <input type="file" class="form-control" accept="video/*" @change="previewFile" data-field="video">
+                <span class="text-nowrap" v-if="this.video">{{ tr('video_uploaded') }}</span>
             </div>
 
             <h2 class="h1 mt-3">{{ tr('comment') }}</h2>
@@ -1311,11 +1312,11 @@
                     <div class="modal-body">
                         <div class="border rounded-3 d-flex justify-content-between align-items-center p-3">
                             <span>{{ tr('local_base') }}</span>
-                            <a href="https://evg.ae/_layouts/EVG/trafficaccidents.aspx?language=en" class="btn btn-primary">{{ tr('goto') }}</a>
+                            <a target="_blank" href="https://evg.ae/_layouts/EVG/trafficaccidents.aspx?language=en" class="btn btn-primary">{{ tr('goto') }}</a>
                         </div>
                         <div class=" mt-2 border rounded-3 d-flex justify-content-between align-items-center p-3">
                             <img src="../assets/vinfax.png" alt="">
-                            <a href="https://Vinfaxcar.ru" class="btn btn-primary">{{ tr('goto') }}</a>
+                            <a target="_blank" href="https://Vinfaxcar.ru" class="btn btn-primary">{{ tr('goto') }}</a>
                         </div>
                     </div>
                 </div>
@@ -1668,7 +1669,7 @@ const translations = {
         ru: 'Электронная приборная панель',
     },
     dashboard: {
-        en: 'Ddashboard',
+        en: 'Dashboard',
         ru: 'Приборная панель',
     },
     keyless_entry: {
@@ -1993,6 +1994,10 @@ const translations = {
         en: 'Internal photos',
         ru: 'Фотоотчет салона',
     },
+    video_uploaded: {
+        en: 'Video uploaded',
+        ru: 'Видео загружено'
+    }
 
 
 };
@@ -2002,6 +2007,7 @@ export default {
     name: "QuizView",
     data() {
         return {
+            interval: null,
             chips: [
                 'Scratch',
                 'Chip',
@@ -2010,7 +2016,7 @@ export default {
                 'Disassembly_marks',
                 'Deformation'
             ],
-            photo_dashboard: {},
+            photo_dashboard: {photo: ''},
             chosen_equipment_tab: 'medium',
             lang: 'en',
             master: {
@@ -2446,7 +2452,7 @@ export default {
         },
 
         saveReport() {
-            this.loader = true
+            this.startLoading()
             axios.put(base_url + 'reports/save', this.getReportData()).then(() => {
                 alert('Сохранено')
             }).catch(error => {
@@ -2561,7 +2567,7 @@ export default {
                     const { preview, ...photoWithoutPreview } = photo;
                     return photoWithoutPreview;
                 }),
-                photo_dashboard: this.photo_dashboard,
+                photo_dashboard: this.photo_dashboard.photo,
 
                 functions_check: this.functions_check,
                 functions_problems: this.functions_problems,
@@ -2577,8 +2583,8 @@ export default {
                 mileage: this.mileage,
                 gearbox: this.gearbox,
 
-                photo_vin: this.photo_vin,
-                photo_tech_info: this.photo_tech_info,
+                photo_vin: this.photo_vin.photo,
+                photo_tech_info: this.photo_tech_info.photo,
             };
             return reportData;
 
@@ -2748,16 +2754,16 @@ export default {
             this.loader = true;
             this.progress = 0;
 
-            let increment = 5; // Choose an increment value based on your requirements
+            let increment = 20; // Choose an increment value based on your requirements
             if (fileSize) {
                 increment = this.calculateIncrement(fileSize);
             }
 
-            let loader = setInterval(() => {
+            this.interval = setInterval(() => {
                 if (this.progress < 100) {
                     this.progress += increment;
                 } else {
-                    clearInterval(loader);
+                    clearInterval(this.interval);
                     // this.loader = false;
                 }
             }, 10); // This value can be adjusted based on how fast you want the progress bar to fill
@@ -2782,6 +2788,12 @@ export default {
     computed: {},
 
     watch: {
+        'loader' : function() {
+            if (this.loader == false){
+                this.progress = 0;
+                clearInterval(this.interval);
+            }
+        },
         'photo_vin.photo': function () {
             this.updateReport();
         },
@@ -3094,9 +3106,13 @@ h2
     width: fit-content
     height: fit-content
 
+    @media (max-width: 768px)
+        width: 100%
+
 
     &__item
         min-width: 90px
+        width: calc(33.3% - 0.5rem)
         border-radius: 5px
         padding: 2px 8px 4px
         transition: .3s
