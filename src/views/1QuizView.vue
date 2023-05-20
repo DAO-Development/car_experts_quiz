@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div :class="{'overflow-hidden' : loader}">
 
         <div class="usl-header">
             <div class="container">
@@ -505,6 +505,7 @@
 
                 </div>
             </div>
+            <div  v-if="!tire_similar">
             <div class="row mb-3 g-3" v-for="(tyre, tyre_name) in tires" :key="tyre">
                 <div class="col-12">
                     <h3>
@@ -565,6 +566,7 @@
                         {{ tr('delete') }}
                     </button>
                 </div>
+            </div>
             </div>
             <div class="row g-3">
                 <h3 v-if="!tire_similar">{{ tr('another') }}</h3>
@@ -952,7 +954,7 @@
                                 {{ tr(chip.toLowerCase()) }}
                             </button>
                         </div>
-                        <div class="col-md-5 photo-description">
+                        <div class=" photo-description">
                             <div class="form-group my-md-3">
                                 <input v-model="photo_external_damage[i].description" type="text" class="form-control">
                             </div>
@@ -1084,7 +1086,7 @@
                              :src="photo_internal_damage[i]['preview'] " alt="Preview Image"/>
                         <img v-else class=" preview-image" src="../assets/preview-template.png" alt="no Preview Image"/>
 
-                        <div class="col-md-5 photo-description">
+                        <div class=" photo-description">
                             <div class="form-group my-md-3">
                                 <input v-model="photo_internal_damage[i].description" type="text" class="form-control">
                             </div>
@@ -1997,6 +1999,15 @@ const translations = {
     video_uploaded: {
         en: 'Video uploaded',
         ru: 'Видео загружено'
+    },
+    saved: {
+        en: 'Saved',
+        ru: 'Сохранено'
+    },
+
+    saving_error: {
+        en: 'Saving error',
+        ru: 'Ошибка сохранения'
     }
 
 
@@ -2180,10 +2191,6 @@ export default {
                     value: false,
                 },
                 {
-                    name: 'seats_ventilation',
-                    value: false,
-                },
-                {
                     name: 'android_auto_carplay',
                     value: false,
                 },
@@ -2296,6 +2303,8 @@ export default {
     },
 
     mounted() {
+        document.body.classList.add('overflow-hidden');
+
         this.lang = this.$route.params.lang
         document.getElementsByClassName('fade')[0].addEventListener('click', () => {
             this.modal_color = false
@@ -2454,10 +2463,12 @@ export default {
         saveReport() {
             this.startLoading()
             axios.put(base_url + 'reports/save', this.getReportData()).then(() => {
-                alert('Сохранено')
+                alert(this.tr('saved'))
+                
             }).catch(error => {
                 // Handle any errors that occurred during the request
-                alert('Ошибка сохранения')
+                alert(this.tr('saving_error'))
+                alert(this.tr('saving_error'))
 
                 console.error(error);
             }).finally(() => {
@@ -2471,11 +2482,11 @@ export default {
                 this.loader = false
             } else {
                 axios.post(base_url + 'reports/saveCheck', this.getReportData()).then(() => {
-                    alert('Сохранено')
+                    alert(this.tr('saved'))
                     this.$router.push({'name': 'quiz-new'})
                 }).catch(error => {
                     // Handle any errors that occurred during the request
-                    alert('Ошибка сохранения')
+                    alert(this.tr('saving_error'))
 
                     console.error(error);
                 }).finally(() => {
@@ -2492,7 +2503,7 @@ export default {
 
                 axios.put(base_url + 'reports', this.getReportData()).catch(error => {
                     // Handle any errors that occurred during the request
-                    alert('Ошибка сохранения')
+                    alert(this.tr('saving_error'))
 
                     console.error(error);
                 });
@@ -2788,10 +2799,15 @@ export default {
     computed: {},
 
     watch: {
-        'loader' : function() {
+        'loader' : function(newVal) {
             if (this.loader == false){
                 this.progress = 0;
                 clearInterval(this.interval);
+            }
+            if (newVal) {
+                document.body.classList.add('overflow-hidden');
+            } else {
+                document.body.classList.remove('overflow-hidden');
             }
         },
         'photo_vin.photo': function () {
@@ -3330,6 +3346,8 @@ h2
     display: grid
     place-content: center
     background-color: rgba(255, 255, 255, 70%)
+    overflow: hidden
+
 
 .loader-container
     position: relative
