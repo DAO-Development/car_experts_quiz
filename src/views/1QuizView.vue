@@ -117,9 +117,9 @@
                         <div class="form-group">
                             <label class="form-label">{{ tr('drive') }}</label>
                             <select v-model="drive" name="" class="form-select">
-                                <option :value="tr('full')">{{ tr('full') }}</option>
-                                <option :value="tr('front')">{{ tr('front') }}</option>
-                                <option :value="tr('rear')">{{ tr('rear') }}</option>
+                                <option :value="tr('all')">{{ tr('All') }}</option>
+                                <option :value="tr('front')">{{ tr('Front') }}</option>
+                                <option :value="tr('rear')">{{ tr('Rear') }}</option>
                             </select>
                         </div>
                     </div>
@@ -1410,7 +1410,7 @@ const translations = {
        ru: 'Компьютерная диагностика: комментарий' 
     },
 to_scheme:{
-    en: 'To scheme',
+    en: 'To Scheme',
     ru: 'К схеме'
 },
 delete: {
@@ -1423,22 +1423,22 @@ another: {
 },
 
 back_right: {
-    en: 'Rear right',
+    en: 'Rear Right',
     ru: 'Заднее правое'
 },
 
 back_left: {
-    en: 'Rear left',
+    en: 'Rear Left',
     ru: 'Заднее левое'
 },
 
 front_right: {
-    en: 'Front right',
+    en: 'Front Right',
     ru: 'Переднее правое'
 },
 
 front_left: {
-    en: 'Front left',
+    en: 'Front Left',
     ru: 'Переднее левое'
 },
 
@@ -1664,7 +1664,7 @@ tires: {
         ru: 'Работа функций'
     },
     everything_works: {
-        en: 'Everything works',
+        en: 'Everything Works Properly',
         ru: 'Все работает'
     },
     problems_with: {
@@ -1706,11 +1706,11 @@ tires: {
         ru: 'Датчик давления в шинах',
     },
     adaptive_light: {
-        en: 'Adaptive light',
+        en: 'Adaptive Light',
         ru: 'Адаптивный свет',
     },
     automatic_high_beam: {
-        en: 'Automatic high beam',
+        en: 'Automatic High Beam',
         ru: 'Автоматический дальний свет',
     },
     tow_bar: {
@@ -1718,11 +1718,11 @@ tires: {
         ru: 'Фаркоп',
     },
     cruise_control: {
-        en: 'Cruise control',
+        en: 'Cruise Control',
         ru: 'Круиз-контроль',
     },
     parking_assistance_system: {
-        en: 'Parking assistance system',
+        en: 'Parking Assistance System',
         ru: 'Система помощи при парковке',
     },
     camera: {
@@ -1734,15 +1734,15 @@ tires: {
         ru: 'Камера 360',
     },
     head_up_display: {
-        en: 'Head-up display',
+        en: 'Head-up Display',
         ru: 'Проекционный дисплей',
     },
     hands_free_trunk_opening: {
-        en: 'Hands-free trunk opening',
+        en: 'Hands-free Trunk Opening',
         ru: 'Открытие багажника без помощи рук',
     },
     digital_dashboard: {
-        en: 'Digital dashboard',
+        en: 'Digital Dashboard',
         ru: 'Электронная приборная панель',
     },
     dashboard: {
@@ -1750,19 +1750,19 @@ tires: {
         ru: 'Приборная панель',
     },
     keyless_entry: {
-        en: 'Keyless entry',
+        en: 'Keyless Entry',
         ru: 'Бесключевой доступ',
     },
     electric_folding_mirrors: {
-        en: 'Power folding mirrors',
+        en: 'Power Folding Mirrors',
         ru: 'Электроскладывание зеркал',
     },
     start_stop_system: {
-        en: 'Start-stop system',
+        en: 'Engine Start Button',
         ru: 'Система «старт-стоп»',
     },
     leather_interior: {
-        en: 'Leather interior',
+        en: 'Leather Interior',
         ru: 'Кожаный салон',
     },
     sunroof: {
@@ -1770,43 +1770,43 @@ tires: {
         ru: 'Люк',
     },
     panoramic_roof: {
-        en: 'Panoramic roof',
+        en: 'Panoramic Roof',
         ru: 'Панорамная крыша',
     },
     heated_steering_wheel: {
-        en: 'Heated steering wheel',
+        en: 'Heated Steering Wheel',
         ru: 'Обогрев рулевого колеса',
     },
     third_row_seats: {
-        en: 'Third row seats',
+        en: 'Third Row Seats',
         ru: 'Третий ряд сидений',
     },
     electric_seat_adjustment: {
-        en: 'Electric seat adjustment',
+        en: 'Electric Seat Adjustment',
         ru: 'Электрорегулировка сидений',
     },
     seat_position_memory: {
-        en: 'Seat position memory',
+        en: 'Seat Position Memory',
         ru: 'Память положения сидений',
     },
     heated_seats: {
-        en: 'Heated seats',
+        en: 'Heated Seats',
         ru: 'Подогрев сидений',
     },
     ventilated_seats: {
-        en: 'Ventilated seats',
+        en: 'Ventilated Seats',
         ru: 'Вентиляция сидений',
     },
     premium_audio_system: {
-        en: 'Premium audio system',
+        en: 'Premium Audio System',
         ru: 'Премиум Аудиосистема',
     },
     multimedia_system_rear_passengers: {
-        en: 'Rear passenger multimedia system',
+        en: 'Rear Passenger Multimedia System',
         ru: 'Мультимедиа система для задних пассажиров',
     },
     navigation_system: {
-        en: 'Navigation system',
+        en: 'Navigation System',
         ru: 'Навигационная система',
     },
     android_auto_carplay: {
@@ -1814,49 +1814,49 @@ tires: {
         ru: 'Android Auto/CarPlay',
     },
     power_outlet_220v: {
-        en: 'Power outlet 220V',
+        en: 'Power Outlet 220V',
         ru: 'Розетка 220V',
     },
     seat_massage: {
-        en: 'Seat massage',
-        ru: 'Массаж сидений',
+        en: 'Seat Massage',
+        ru: 'Сиденья с массажем',
     },
     door_closers: {
-        en: 'Soft close',
+        en: 'Soft Close',
         ru: 'Доводчики дверей',
     },
     digital_instrument_panel: {
-        en: 'Digital instrument panel',
+        en: 'Digital Instrument Panel',
         ru: 'Электронная приборная панель'
     },
     third_row_of_seats: {
-        en: 'Third row of seats',
+        en: 'Third Row of Seats',
         ru: 'Третий ряд сидений'
     },
     tow_hitch: {
-        en: 'Tow hitch',
+        en: 'Tow Hitch',
         ru: 'Фаркоп'
     },
 
 
     parking_sensors: {
-        en: 'Parking sensors',
+        en: 'Parking Sensors',
         ru: 'Парктроники',
     },
     start_stop: {
-        en: 'Start-Stop',
+        en: 'Engine Start Button',
         ru: 'Кнопка «Start engine»',
     },
     leather: {
-        en: 'Leather',
+        en: 'Leather Interior',
         ru: 'Кожаный салон',
     },
     third_seat_rows: {
-        en: 'Third seats row',
+        en: 'Third Row Seating',
         ru: 'Третий ряд сидений',
     },
     seats_heating: {
-        en: 'Seats heating',
+        en: 'Seat Heating',
         ru: 'Обогрев сидений',
     },
     multimedia_lcd_screen: {
@@ -1864,27 +1864,27 @@ tires: {
         ru: 'Мультимедиа с ЖК-дисплеем',
     },
     adaptive_cruise_control: {
-        en: 'Adaptive Cruise control',
+        en: 'Adaptive Cruise Control',
         ru: 'Адаптивный круиз-контроль',
     },
     electric_seats: {
-        en: 'Power seats',
+        en: 'Power Seats',
         ru: 'Электрорегулировка сидений',
     },
     seats_memory: {
-        en: 'Seats memory',
+        en: 'Seats Memory',
         ru: 'Память положения сидений',
     },
     steering_wheel_heating: {
-        en: 'Steering wheel heating',
+        en: 'Steering Wheel Heating',
         ru: 'Обогрев рулевого колеса',
     },
     seats_ventilation: {
-        en: 'Seats ventilation',
+        en: 'Seats Ventilation',
         ru: 'Вентиляция сидений',
     },
     electric_trunk_lid: {
-        en: 'Electric trunk lid',
+        en: 'Electric Trunk Lid',
         ru: 'Открытие багажника без помощи рук',
     },
     virtual_dashboard: {
@@ -1892,11 +1892,11 @@ tires: {
         ru: 'Виртуальная приборная панель',
     },
     power_steering: {
-        en: 'Steering wheel with power adjustment',
+        en: 'Steering Column with Power Adjustment',
         ru: 'Электропривод рулевой колонки',
     },
     adaptive_lights: {
-        en: 'Adaptive lights',
+        en: 'Adaptive Headlights',
         ru: 'Адаптивный свет',
     },
     autopilot: {
@@ -1904,19 +1904,19 @@ tires: {
         ru: 'Автопилот',
     },
     self_parking: {
-        en: 'Self parking',
+        en: 'Self Parking System',
         ru: 'Автоматическая парковка',
     },
     seats_ventilation_2: {
-        en: 'Seats ventilation',
+        en: 'Seats Ventilation',
         ru: 'Вентиляция сидений',
     },
     seats_massage: {
-        en: 'Seats massage',
+        en: 'Seats Massage',
         ru: 'Массаж сидений',
     },
     windshield_projection: {
-        en: 'Head up display',
+        en: 'Head up Display',
         ru: 'Проекция на лобовое стекло',
     },
     premium_audiosystem: {
@@ -1942,7 +1942,7 @@ tires: {
         ru: 'Выберите толщину покраски'
     },
     before: {
-        en: 'below',
+        en: 'up to',
         ru: 'до'
     },
     mkm: {
@@ -1950,11 +1950,11 @@ tires: {
         ru: 'мкм'
     },
     condition: {
-        en: 'Body condition',
+        en: 'Body Condition',
         ru: 'Состояние кузова'
     },
     bumper_front: {
-        en: 'Bumper Front',
+        en: 'Front Bumper',
         ru: 'Передний бампер',
     },
     front_left_rack: {
@@ -1962,7 +1962,7 @@ tires: {
         ru: 'Передняя левая стойка',
     },
     fenderfrontright: {
-        en: 'Fender Front Right',
+        en: 'Front Right Fender',
         ru: 'Переднее правое крыло',
     },
     hood: {
@@ -1974,7 +1974,7 @@ tires: {
         ru: 'Передняя правая стойка',
     },
     doorfrontright: {
-        en: 'Door Front Right',
+        en: 'Front Right Door',
         ru: 'Передняя правая дверь',
     },
     middle_right_rack: {
@@ -1982,7 +1982,7 @@ tires: {
         ru: 'Средняя правая стойка',
     },
     doorbackright: {
-        en: 'Door Rear Right',
+        en: 'Rear Right Door',
         ru: 'Задняя правая дверь',
     },
     back_right_rack: {
@@ -1990,7 +1990,7 @@ tires: {
         ru: 'Задняя правая стойка',
     },
     fenderbackright: {
-        en: 'Fender Rear Right',
+        en: 'Rear Right Fender',
         ru: 'Заднее правое крыло',
     },
     hoodback: {
@@ -1998,7 +1998,7 @@ tires: {
         ru: 'Задний бампер',
     },
     trunk: {
-        en: 'Trunk lid',
+        en: 'Trunk Lid',
         ru: 'Крышка багажника',
     },
     roof: {
@@ -2006,15 +2006,15 @@ tires: {
         ru: 'Крыша',
     },
     fenderfrontleft: {
-        en: 'Fender Front Left',
+        en: 'Front Left Fender',
         ru: 'Переднее левое крыло',
     },
     doorfrontleft: {
-        en: 'Door Front Left',
+        en: 'Front Left Door',
         ru: 'Передняя левая дверь',
     },
     doorbackleft: {
-        en: 'Door Rear Left',
+        en: 'Rear Left Door',
         ru: 'Задняя левая дверь',
     },
     middle_left_rack: {
@@ -2026,7 +2026,7 @@ tires: {
         ru: 'Задняя левая стойка',
     },
     fenderbackleft: {
-        en: 'Fender Rear Left',
+        en: 'Rear Left Fender',
         ru: 'Заднее левое крыло',
     },
     send_check: {
@@ -2066,11 +2066,11 @@ tires: {
         ru: 'Деформация',
     },
     photo_external: {
-        en: 'External photos',
+        en: 'External Photos',
         ru: 'Фотоотчет снаружи',
     },
     photo_internal: {
-        en: 'Internal photos',
+        en: 'Internal Photos',
         ru: 'Фотоотчет салона',
     },
     video_uploaded: {
