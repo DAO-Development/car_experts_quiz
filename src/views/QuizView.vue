@@ -707,7 +707,7 @@ import axios from "axios";
 import sha1 from 'js-sha1';
 
 // const base_url = 'http://127.0.0.1:8000/api/'
-const base_url = 'https://carexpertsnew.ffox.site/api/'
+const base_url = 'https://report.car-experts.ae/api/'
 export default {
     name: "QuizView",
     data() {

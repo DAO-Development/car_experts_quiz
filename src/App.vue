@@ -75,15 +75,17 @@ $primary-dark: #2E2cE1
 
     @media (max-width: 766px)
 
-        height: 50px
+        height: 58px
 
         &__text
             display: none
 
         &__logo
-            height: 32px
+            height: 38px
         .container
-            justify-content: center
+            display: grid
+            place-items: center
+            grid-template-columns: 1fr
 
 .btn-primary
     background: $primary

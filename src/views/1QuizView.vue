@@ -7,7 +7,7 @@
                     {{ tr('title') }}
                 </div>
                 <div class="usl-header__logo">
-                    <img src="./../assets/logo.svg" alt="">
+                    <img src="./../assets/logo.png" alt="">
                 </div>
             </div>
 
@@ -17,15 +17,15 @@
             <h1>404</h1>
         </div>
         <div v-else class="container pb-5">
-            <h2 class="h1 d-md-none">                    {{ tr('title') }}
+            <h2 class="h1 d-md-none"> {{ tr('title') }}
             </h2>
             <div class="mb-md-5 mb-3">
 
                 <div class="form-group my-3">
                     <label class="form-label">{{ tr('vin') }}</label>
-                    <input type="file" class=" col-md-9 form-control  mb-3" accept="image/*" @change="previewFile"
+                    <input type="file" class=" col-md-9 form-control  mb-3" accept="image/*" @change="uploadFileToR2"
                            data-field="photo_vin" data-subfield="photo">
-                    <img class="preview-image mb-3" v-if="photo_vin.preview" :src="photo_vin.preview"
+                    <img class="preview-image mb-3" v-if="photo_vin.photo" :src="photo_vin.photo"
                          alt="Preview Image"/>
                     <div class="d-flex gap-3">
                         <input v-model="vin" type="text" class="form-control">
@@ -33,9 +33,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                        <div class="crashes-title">
-                            <label class="form-label">{{ tr('crashes') }}</label>
-                            <button class="btn crashes-btn copy d-flex gap-2 align-items-center" @click="copyVin">
+                    <div class="crashes-title">
+                        <label class="form-label">{{ tr('crashes') }}</label>
+                        <button class="btn crashes-btn copy d-flex gap-2 align-items-center" @click="copyVin">
                                     <span v-if="copiedVin">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                                              xmlns="http://www.w3.org/2000/svg">
@@ -44,18 +44,18 @@
                                                 fill="#bbb"/>
                                         </svg>
                                     </span>
-                                {{ tr('copyVin') }}
-                            </button>
-                            <button class="btn crashes-btn" @click="openCheckModal">
-                                {{ tr('check') }}
-                            </button>
-                        </div>
-
-                        <select v-model="crashes" name="" class="form-select">
-                            <option :value="1">{{ tr('yes') }}</option>
-                            <option :value="0">{{ tr('no') }}</option>
-                        </select>
+                            {{ tr('copyVin') }}
+                        </button>
+                        <button class="btn crashes-btn" @click="openCheckModal">
+                            {{ tr('check') }}
+                        </button>
                     </div>
+
+                    <select v-model="crashes" name="" class="form-select">
+                        <option :value="1">{{ tr('yes') }}</option>
+                        <option :value="0">{{ tr('no') }}</option>
+                    </select>
+                </div>
 
                 <h2>{{ tr('mainInfo') }}</h2>
 
@@ -468,7 +468,7 @@
                     <template v-for="(color, k) in colored" :key="k">
                         <div class="color__element" v-if="color!=0">
                             {{ tr(k) }} :
-                            {{ ((color != 5 ? (tr('before') + ' ') : '') + colors[color].label + ' ' + tr('mkm')) }}
+                            {{ ((color != 5 ? (tr('before') + ' ') : (tr('up_to') + ' ')) + colors[color].label + ' ' + tr('mkm')) }}
                         </div>
                     </template>
 
@@ -505,87 +505,88 @@
 
                 </div>
             </div>
-            <div  v-if="!tire_similar">
-            <div class="row mb-3 g-3" v-for="(tyre, tyre_name) in tires" :key="tyre">
-                <div class="col-12">
-                    <h3>
-                        {{ tr(tyre_name) }}
-                    </h3>
-                </div>
-                <div class="col-md-4 col-12">
-                    <div class="form-group">
+            <div v-if="!tire_similar">
+                <div class="row mb-3 g-3" v-for="(tyre, tyre_name) in tires" :key="tyre">
+                    <div class="col-12">
+                        <h3>
+                            {{ tr(tyre_name) }}
+                        </h3>
+                    </div>
+                    <div class="col-md-4 col-12">
                         <div class="form-group">
-                            <select v-model="tyre.manufacturer" name="" class="form-select">
+                            <select
+                                v-model="tyre.manufacturer" name="" class="form-select">
                                 <option :value="null" disabled selected>{{ tr('manufacturer') }}</option>
                                 <option :value="b" v-for="b in tyreBrands" :key="b">{{ b }}</option>
-                                <option value="another">{{ tr('otherBrand') }}</option>
+                                <option value="">{{ tr('otherBrand') }}</option>
                             </select>
                         </div>
-                        <div
-                            v-if="tyre.manufacturer && (tyre.manufacturer === 'another' || !tyreBrands.includes(tyre.manufacturer))">
-                            <input class="form-control" type="text" :value="customTyreBrand"
-                                   @input="tyre.manufacturer = $event.target.value"
+                        <div v-if="tyre.manufacturer === 'another' || !tyreBrands.includes(tyre.manufacturer)">
+                            <input class="form-control mt-2" type="text" v-model="tyre.manufacturer"
                                    :placeholder="tr('enterAnotherOption')">
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 col-12">
-                    <div class="form-group">
-                        <input v-model="tyre.year" type="text" class="form-control" :placeholder=" tr('year') ">
+                    <div class="col-md-4 col-12">
+                        <div class="form-group">
+                            <input v-model="tyre.year" type="text" class="form-control" :placeholder=" tr('year') ">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-12">
+                        <div class="form-group py-1 form-switch form-check d-flex gap-3">
+                            <input type="checkbox" v-model="tyre.condition" id="tire_similar" :checked="tyre.condition"
+                                   class="form-check-input m-1">
+                            <label for="tire_similar" class="form-label">{{ tr('normal') }}</label>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12" v-if="!tyre.condition">
+                        <div class="form-group">
+                            <label
+                                class="btn btn-primary d-flex align-items-center justify-content-center w-100 btn-ico gap-3">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z"
+                                        stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path
+                                        d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z"
+                                        stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white"
+                                          stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+
+
+                                {{ tr('upload_photo') }}
+                                <input type="file" class="d-none form-control" accept="image/*" @change="uploadFileToR2"
+                                       data-field="tires" data-subfield="photo" :data-index="tyre_name">
+                            </label>
+                            <img class="preview-image" v-if="tyre.photo" :src="tyre.photo" alt="Preview Image"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-6">
+                        <button class="btn btn-secondary " @click="deleteAnotherTire(tyre_name)">
+                            {{ tr('delete') }}
+                        </button>
                     </div>
                 </div>
-
-                <div class="col-md-4 col-12">
-                    <div class="form-group py-1 form-switch form-check d-flex gap-3">
-                        <input type="checkbox" v-model="tyre.condition" id="tire_similar" :checked="tyre.condition"
-                               class="form-check-input m-1">
-                        <label for="tire_similar" class="form-label">{{ tr('normal') }}</label>
-
-                    </div>
-                </div>
-                <div class="col-md-4 col-12" v-if="!tyre.condition">
-                    <div class="form-group">
-                        <label
-                               class="btn btn-primary d-flex align-items-center justify-content-center w-100 btn-ico gap-3">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-
-
-                            {{ tr('upload_photo') }}
-                        <input type="file" class="d-none form-control" accept="image/*" @change="previewFile"
-                               data-field="tires" data-subfield="photo" :data-index="tyre_name">
-                        </label>
-                        <img class="preview-image" v-if="tyre.preview" :src="tyre.preview" alt="Preview Image"/>
-                    </div>
-                </div>
-                <div class="col-md-4 col-6">
-                    <button class="btn btn-secondary " @click="deleteAnotherTire(tyre_name)">
-                        {{ tr('delete') }}
-                    </button>
-                </div>
-            </div>
             </div>
             <div class="row g-3">
                 <h3 v-if="!tire_similar">{{ tr('another') }}</h3>
                 <div class="col-md-4 col-12">
                     <div class="form-group">
-                        <div class="form-group">
-                            <select v-model="tyre.manufacturer" name="" class="form-select">
-                                <option :value="null" disabled selected>{{ tr('manufacturer') }}</option>
-                                <option :value="b" v-for="b in tyreBrands" :key="b">{{ b }}</option>
-                                <option value="another">{{ tr('otherBrand') }}</option>
-                            </select>
-                        </div>
-                        <div
-                            v-if="tyre.manufacturer && (tyre.manufacturer === 'another' || !tyreBrands.includes(tyre.manufacturer))">
-                            <input class="form-control" type="text" :value="customTyreBrand"
-                                   :placeholder="tr('enterAnotherOption')"
-                                   @input="tyre.manufacturer = $event.target.value">
-                        </div>
+                        <select
+                            v-model="tyre.manufacturer" name="" class="form-select">
+                            <option :value="null" disabled selected>{{ tr('manufacturer') }}</option>
+                            <option :value="b" v-for="b in tyreBrands" :key="b">{{ b }}</option>
+                            <option value="">{{ tr('otherBrand') }}</option>
+                        </select>
                     </div>
+                    <div v-if="tyre.manufacturer === 'another' || !tyreBrands.includes(tyre.manufacturer)">
+                        <input class="form-control mt-2" type="text" v-model="tyre.manufacturer"
+                               :placeholder="tr('enterAnotherOption')">
+                    </div>
+
                 </div>
                 <div class="col-md-4 col-12">
                     <div class="form-group">
@@ -606,17 +607,23 @@
                     <div class="form-group">
                         <label
                             class="btn btn-primary d-flex align-items-center justify-content-center w-100 btn-ico gap-3">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z"
+                                    stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path
+                                    d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z"
+                                    stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
 
                             {{ tr('upload_photo') }}
-                        <input type="file" class="d-none form-control" accept="image/*" @change="previewFile"
-                               data-field="tyre" data-subfield="photo">
+                            <input type="file" class="d-none form-control" accept="image/*" @change="uploadFileToR2"
+                                   data-field="tyre" data-subfield="photo">
                         </label>
-                        <img class="preview-image" v-if="tyre.preview" :src="tyre.preview" alt="Preview Image"/>
+                        <img class="preview-image" v-if="tyre.photo" :src="tyre.photo" alt="Preview Image"/>
                     </div>
                 </div>
             </div>
@@ -631,8 +638,8 @@
                         <div class=" photo-row-new">
 
                             <div class="">
-                                <img class=" preview-image" v-if="photo_external[i]['preview']"
-                                     :src="photo_external[i]['preview']" alt="Preview Image"/>
+                                <img class=" preview-image" v-if="photo_external[i]['photo']"
+                                     :src="photo_external[i]['photo']" alt="Preview Image"/>
                             </div>
                             <div class="">
                                 <button class="btn btn-primary" @click="photo_external.splice(i, 1)">
@@ -646,13 +653,17 @@
                        class="btn btn-primary d-flex align-items-center justify-content-center w-100 btn-ico gap-3">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_459_865)">
-                            <path d="M17.2169 14.1666L17.7751 4.8664L10 9.99995L9.44177 19.3002L17.2169 14.1666Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M10.5581 0.699738L2.783 5.83328L2.22477 15.1335" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M14.1665 2.78311L6.3914 7.91666L5.83317 17.2169" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17.2169 14.1666L17.7751 4.8664L10 9.99995L9.44177 19.3002L17.2169 14.1666Z"
+                                  stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10.5581 0.699738L2.783 5.83328L2.22477 15.1335" stroke="white"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14.1665 2.78311L6.3914 7.91666L5.83317 17.2169" stroke="white"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
                         </g>
                         <defs>
                             <clipPath id="clip0_459_865">
-                                <rect width="20" height="20" fill="white" transform="translate(20 -3.05176e-05) rotate(90)"/>
+                                <rect width="20" height="20" fill="white"
+                                      transform="translate(20 -3.05176e-05) rotate(90)"/>
                             </clipPath>
                         </defs>
                     </svg>
@@ -661,13 +672,14 @@
                     {{ tr('add_photo') }}
                 </label>
                 <input id="photo_out" type="file" multiple class="d-none form-control" accept="image/*"
-                       @change="previewFiles"
+                       @change="uploadFilesToR2"
                        data-field="photo_external" :data-index="i" data-subfield="photo">
 
             </div>
             <h2 class="h1 my-3">{{ tr('external') + ' ' + tr('damages') }}</h2>
 
-            <svg class="colored-svg mb-3" id="external_damages" xmlns="http://www.w3.org/2000/svg" width="397" height="521" fill="none"
+            <svg class="colored-svg mb-md-3" id="external_damages" xmlns="http://www.w3.org/2000/svg" width="397"
+                 height="521" fill="none"
                  viewBox="0 0 397 521">
                 <g class="final">
                     <g class="right">
@@ -937,14 +949,16 @@
                 </g>
             </svg>
 
-            <div class="row g-3">
+            <button class="mb-3 d-block btn btn-primary" @click="chooseDetailDamage('')">{{ tr('add_another_damage') }}</button>
+
+            <div class="row g-3 damage-cards">
                 <div class="col-lg-4 col-md-6 col-12 " v-for="(photo,i) in photo_external_damage" :key="i">
                     <div class="damage-card mb-3">
-                        <img class=" preview-image" v-if="photo_external_damage[i]['preview']"
-                             :src="photo_external_damage[i]['preview'] " alt="Preview Image"/>
+                        <img class=" preview-image" v-if="photo_external_damage[i]['photo']"
+                             :src="photo_external_damage[i]['photo'] " alt="Preview Image"/>
                         <img v-else class=" preview-image" src="../assets/preview-template.png" alt="no Preview Image"/>
 
-                        <div class="damage-card__name">
+                        <div class="damage-card__name" v-if="photo.name && photo.name!='another'">
                             {{ tr(photo.name) }}
                         </div>
                         <div class="damage-card__chips">
@@ -960,16 +974,23 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label :for="'external_damage_'+i" class="btn-ico btn btn-primary"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <label :for="'external_damage_'+i" class="btn-ico btn btn-primary">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z"
+                                        stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path
+                                        d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z"
+                                        stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white"
+                                          stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 {{ tr('upload_photo') }}</label>
 
 
                             <input :id="'external_damage_'+i" type="file" class="d-none col-md-9 form-control"
-                                   accept="image/*" @change="previewFile"
+                                   accept="image/*" @change="uploadFileToR2"
                                    data-field="photo_external_damage" :data-index="i" data-subfield="photo">
 
                         </div>
@@ -979,11 +1000,15 @@
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-12">
-                    <a href="#external_damages" class="w-100 btn-ico btn btn-primary my-3"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.6668 7.49998L7.50016 3.33331L3.3335 7.49998" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M16.6667 16.6666H10.8333C9.94928 16.6666 9.10143 16.3155 8.47631 15.6903C7.85119 15.0652 7.5 14.2174 7.5 13.3333V3.33331" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                        {{ tr('to_scheme')}}</a>
+                    <a href="#external_damages" class="w-100 btn-ico btn btn-primary my-3">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.6668 7.49998L7.50016 3.33331L3.3335 7.49998" stroke="white"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                            <path
+                                d="M16.6667 16.6666H10.8333C9.94928 16.6666 9.10143 16.3155 8.47631 15.6903C7.85119 15.0652 7.5 14.2174 7.5 13.3333V3.33331"
+                                stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        {{ tr('to_scheme') }}</a>
 
                 </div>
             </div>
@@ -992,9 +1017,9 @@
                 <div class="col-md-5">
                     <div class="form-group my-3">
                         <label class="form-label">{{ tr('vehicleInfo') }}</label>
-                        <input type="file" class="col-md-9 form-control" accept="image/*" @change="previewFile"
+                        <input type="file" class="col-md-9 form-control" accept="image/*" @change="uploadFileToR2"
                                data-field="photo_tech_info" data-subfield="photo">
-                        <img class="preview-image" v-if="photo_tech_info.preview" :src="photo_tech_info.preview"
+                        <img class="preview-image" v-if="photo_tech_info.photo" :src="photo_tech_info.photo"
                              alt="Preview Image"/>
                     </div>
                 </div>
@@ -1009,8 +1034,8 @@
                         <div class=" photo-row-new">
 
                             <div class="">
-                                <img class=" preview-image" v-if="photo_internal[i]['preview']"
-                                     :src="photo_internal[i]['preview']" alt="Preview Image"/>
+                                <img class=" preview-image" v-if="photo_internal[i]['photo']"
+                                     :src="photo_internal[i]['photo']" alt="Preview Image"/>
                             </div>
                             <div class="">
                                 <button class="btn btn-primary" @click="photo_internal.splice(i, 1)">
@@ -1023,23 +1048,26 @@
                            class="btn btn-primary d-flex align-items-center justify-content-center w-100 btn-ico gap-3">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clip-path="url(#clip0_459_865)">
-                                <path d="M17.2169 14.1666L17.7751 4.8664L10 9.99995L9.44177 19.3002L17.2169 14.1666Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M10.5581 0.699738L2.783 5.83328L2.22477 15.1335" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M14.1665 2.78311L6.3914 7.91666L5.83317 17.2169" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.2169 14.1666L17.7751 4.8664L10 9.99995L9.44177 19.3002L17.2169 14.1666Z"
+                                      stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10.5581 0.699738L2.783 5.83328L2.22477 15.1335" stroke="white"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14.1665 2.78311L6.3914 7.91666L5.83317 17.2169" stroke="white"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
                             </g>
                             <defs>
                                 <clipPath id="clip0_459_865">
-                                    <rect width="20" height="20" fill="white" transform="translate(20 -3.05176e-05) rotate(90)"/>
+                                    <rect width="20" height="20" fill="white"
+                                          transform="translate(20 -3.05176e-05) rotate(90)"/>
                                 </clipPath>
                             </defs>
                         </svg>
 
 
-
                         {{ tr('add_photo') }}
                     </label>
                     <input id="photo_in" type="file" multiple class="d-none form-control" accept="image/*"
-                           @change="previewFiles"
+                           @change="uploadFilesToR2"
                            data-field="photo_internal" :data-index="i" data-subfield="photo">
 
                 </div>
@@ -1047,7 +1075,7 @@
 
             <h2 class="h1 my-3">{{ tr('dashboard') }}</h2>
             <div class="damage-card">
-                <img class="preview-image" v-if="photo_dashboard.preview" :src="photo_dashboard.preview"
+                <img class="preview-image" v-if="photo_dashboard.photo" :src="photo_dashboard.photo"
                      alt="Preview Image"/>
                 <img v-else class="preview-image" src="../assets/dashboard.png" alt="">
 
@@ -1060,19 +1088,24 @@
                 <label for="photo_dashboard"
                        class="btn btn-primary d-flex align-items-center justify-content-center w-100 btn-ico gap-3">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path
+                            d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z"
+                            stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path
+                            d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z"
+                            stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round"
+                              stroke-linejoin="round"/>
                     </svg>
 
 
                     {{ tr('upload_photo') }}
                 </label>
-                <input id="photo_dashboard" type="file"  class="d-none form-control" accept="image/*"
-                       @change="previewFile"
+                <input id="photo_dashboard" type="file" class="d-none form-control" accept="image/*"
+                       @change="uploadFileToR2"
                        data-field="photo_dashboard" data-subfield="photo">
-<!--                <img class="preview-image" v-if="photo_dashboard.preview" :src="photo_dashboard.preview"-->
-<!--                     alt="Preview Image"/>-->
+                <!--                <img class="preview-image" v-if="photo_dashboard.photo" :src="photo_dashboard.photo"-->
+                <!--                     alt="Preview Image"/>-->
 
             </div>
 
@@ -1082,8 +1115,8 @@
             <div class="row g-3">
                 <div class="col-lg-4 col-md-6 col-12 " v-for="(photo,i) in photo_internal_damage" :key="i">
                     <div class="damage-card mb-3">
-                        <img class=" preview-image" v-if="photo_internal_damage[i]['preview']"
-                             :src="photo_internal_damage[i]['preview'] " alt="Preview Image"/>
+                        <img class=" preview-image" v-if="photo_internal_damage[i]['photo']"
+                             :src="photo_internal_damage[i]['photo'] " alt="Preview Image"/>
                         <img v-else class=" preview-image" src="../assets/preview-template.png" alt="no Preview Image"/>
 
                         <div class=" photo-description">
@@ -1092,16 +1125,23 @@
                             </div>
                         </div>
                         <div class="form-group ">
-                            <label :for="'internal_damage_'+i" class="btn-ico btn btn-primary"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <label :for="'internal_damage_'+i" class="btn-ico btn btn-primary">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z"
+                                        stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path
+                                        d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z"
+                                        stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white"
+                                          stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 {{ tr('upload_photo') }}</label>
 
 
                             <input :id="'internal_damage_'+i" type="file" class="d-none col-md-9 form-control"
-                                   accept="image/*" @change="previewFile"
+                                   accept="image/*" @change="uploadFileToR2"
                                    data-field="photo_internal_damage" :data-index="i" data-subfield="photo">
 
                         </div>
@@ -1112,11 +1152,18 @@
                 </div>
                 <div class="col-lg-4 col-md-6 col-12 ">
                     <div class=" damage-card mb-3">
-                        <button class="btn-ico btn btn-primary" @click="photo_internal_damage.push({})"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <button class="btn-ico btn btn-primary" @click="photo_internal_damage.push({})">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M15.8333 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V4.16667C17.5 3.24619 16.7538 2.5 15.8333 2.5Z"
+                                    stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path
+                                    d="M7.08325 8.33337C7.77361 8.33337 8.33325 7.77373 8.33325 7.08337C8.33325 6.39302 7.77361 5.83337 7.08325 5.83337C6.3929 5.83337 5.83325 6.39302 5.83325 7.08337C5.83325 7.77373 6.3929 8.33337 7.08325 8.33337Z"
+                                    stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.5001 12.5L13.3334 8.33337L4.16675 17.5" stroke="white"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                             {{ tr('add_photo') }}
                         </button>
                     </div>
@@ -1179,10 +1226,10 @@
             </div>
             <h2 class="h1">{{ tr('computer_diagnostics') }}</h2>
             <div class="col-md-6">
-                <input type="file" class="form-control" accept=".pdf" @change="previewFile"
+                <input type="file" class="form-control" accept=".pdf" @change="uploadFileToR2"
                        data-field="computer_diag">
             </div>
-            <label class="form-label mt-2">{{ tr('comment') }}</label>
+            <label class="form-label mt-2">{{ tr('comment_computer_diag') }}</label>
             <textarea v-model="comment_computer_diag" class="form-control" rows="5"></textarea>
 
             <h2>{{ tr('functionality') }}</h2>
@@ -1205,7 +1252,7 @@
 
             <h3 class="mt-3">{{ tr('video_report') }}</h3>
             <div class="d-md-flex align-items-center gap-3">
-                <input type="file" class="form-control" accept="video/*" @change="previewFile" data-field="video">
+                <input type="file" class="form-control" accept="video/*" @change="uploadFileToR2" data-field="video">
                 <span class="text-nowrap" v-if="this.video">{{ tr('video_uploaded') }}</span>
             </div>
 
@@ -1252,7 +1299,8 @@
         <div v-if="loader" class="loader-wrapper">
             <div class="loader-container">
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" :style="'width: ' + progress + '%'" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar" role="progressbar" :style="'width: ' + progress + '%'"
+                         :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
         </div>
@@ -1274,7 +1322,7 @@
                         </div>
                         <input type="range" min="0" max="4" class="form-range" v-model="colored[chosen_detail]">
                         {{
-                            colored[chosen_detail] ? ((colored[chosen_detail] != 5 ? (tr('before') + ' ') : '') + colors[colored[chosen_detail]].label + ' ' + tr('mkm')) : ''
+                            colored[chosen_detail] ? ((colored[chosen_detail] != 4 ? (tr('before') + ' ') : (tr('up_to') + ' ')) + colors[colored[chosen_detail]].label + ' ' + tr('mkm')) : ''
                         }}
                     </div>
                     <div class="modal-footer">
@@ -1309,12 +1357,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 class="modal-title">{{ tr('local_base') }}</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                @click="modals.check = false"></button>
                     </div>
                     <div class="modal-body">
                         <div class="border rounded-3 d-flex justify-content-between align-items-center p-3">
                             <span>{{ tr('local_base') }}</span>
-                            <a target="_blank" href="https://evg.ae/_layouts/EVG/trafficaccidents.aspx?language=en" class="btn btn-primary">{{ tr('goto') }}</a>
+                            <a target="_blank" href="https://portal.moi.gov.ae/eservices/PublicServices/AccidentsInquiry.aspx"
+                               class="btn btn-primary">{{ tr('goto') }}</a>
                         </div>
                         <div class=" mt-2 border rounded-3 d-flex justify-content-between align-items-center p-3">
                             <img src="../assets/vinfax.png" alt="">
@@ -1330,194 +1380,218 @@
 <script>
 import axios from "axios";
 import sha1 from 'js-sha1';
+import {
+  S3Client,
+//   ListBucketsCommand,
+//   ListObjectsV2Command,
+//   GetObjectCommand,
+  PutObjectCommand
+} from "@aws-sdk/client-s3";
+
 
 // const base_url = 'http://127.0.0.1:8000/api/'
-const base_url = 'https://carexpertsnew.ffox.site/api/'
+const base_url = 'https://report.car-experts.ae/api/'
 
 const translations = {
+    crack: {
+        en: 'Crack',
+        ru: 'Трещина'
+    },
+    gap: {
+        en: 'Gap',
+        ru: 'Зазор',
+    },
+    add_another_damage: {
+        en: 'Add another damage',
+        ru: 'Добавить другое повреждение',
+    },
+    comment_computer_diag: {
+       en: 'Computer diagnostics: comment',
+       ru: 'Компьютерная диагностика: комментарий' 
+    },
+to_scheme:{
+    en: 'To scheme',
+    ru: 'К схеме'
+},
+delete: {
+    en: 'Delete',
+    ru: 'Удалить'
+},
+another: {
+    en: 'Another',
+    ru: 'Остальные'
+},
 
-    to_scheme:{
-        en: 'To scheme',
-        ru: 'К схеме'
-    },
-    delete: {
-        en: 'Delete',
-        ru: 'Удалить'
-    },
-    another: {
-        en: 'Another',
-        ru: 'Остальные'
-    },
+back_right: {
+    en: 'Rear right',
+    ru: 'Заднее правое'
+},
 
-    back_right: {
-        en: 'Back right',
-        ru: 'Заднее правое'
-    },
+back_left: {
+    en: 'Rear left',
+    ru: 'Заднее левое'
+},
 
-    back_left: {
-        en: 'Back left',
-        ru: 'Заднее левое'
-    },
+front_right: {
+    en: 'Front right',
+    ru: 'Переднее правое'
+},
 
-    front_right: {
-        en: 'Front right',
-        ru: 'Переднее правое'
-    },
+front_left: {
+    en: 'Front left',
+    ru: 'Переднее левое'
+},
 
-    front_left: {
-        en: 'Front left',
-        ru: 'Переднее левое'
-    },
+normal: {
+    en: 'Normal',
+    ru: 'В норме'
+},
+similar: {
+    en: 'Identical',
+    ru: 'Все одинаковые'
+},
+check: {
+    en: 'Check',
+    ru: 'Проверить'
+},
+copyVin: {
+    en: 'Copy VIN',
+    ru: 'Копировать VIN'
+},
+choose: {
+    en: 'Choose',
+    ru: 'Выберите'
+},
+local_base: {
+    en: 'Local base',
+    ru: 'Местная база'
+},
+goto: {
+    en: 'GO',
+    ru: 'ПЕРЕЙТИ'
+},
+title: {
+    en: 'Car report',
+    ru: 'Отчет по автомобилю',
+},
+mainInfo: {
+    en: 'Main Information',
+    ru: 'Основная информация',
+},
+vin: {
+    en: 'VIN',
+    ru: 'VIN',
+},
+photo_vin: {
+    en: 'photo of VIN',
+    ru: 'фото VIN',
+},
+photo_tech_info: {
+    en: 'photo of vehicle infomation',
+    ru: 'фото информации о транспортном средстве',
+},
+fill: {
+    en: 'Fill',
+    ru: 'заполнить',
+},
+brand: {
+    en: 'Brand',
+    ru: 'Марка',
+},
+model: {
+    en: 'Model',
+    ru: 'Модель',
+},
+year: {
+    en: 'Year',
+    ru: 'Год',
+},
+body: {
+    en: 'Body',
+    ru: 'Кузов',
+},
+bodyColor: {
+    en: 'Body Color',
+    ru: 'Цвет кузова',
+},
+engineVolume: {
+    en: 'Engine Volume',
+    ru: 'Объем двигателя',
+},
+enginePower: {
+    en: 'Engine Power (hp)',
+    ru: 'Мощность (л.с.)',
+},
+mileage: {
+    en: 'Mileage',
+    ru: 'Пробег',
+},
+drive: {
+    en: 'Wheel Drive',
+    ru: 'Привод',
+},
+gearbox: {
+    en: 'Gearbox',
+    ru: 'КПП',
+},
+specification: {
+    en: 'Specification',
+    ru: 'Спецификация',
+},
+guarantee: {
+    en: 'Warranty',
+    ru: 'Гарантия',
+},
+yearGuarantee: {
+    en: 'Year',
+    ru: 'Год',
+},
+monthGuarantee: {
+    en: 'Month',
+    ru: 'Месяц',
+}, sedan: {
+    en: 'Sedan',
+    ru: 'Седан',
+},
+coupe: {
+    en: 'Coupe',
+    ru: 'Купе',
+},
+hatchback: {
+    en: 'Hatchback',
+    ru: 'Хэтчбэк',
+},
+wagon: {
+    en: 'Wagon',
+    ru: 'Универсал',
+},
+crossover: {
+    en: 'Crossover',
+    ru: 'Кроссовер',
+},
+full: {
+    en: 'Full',
+    ru: 'Полный',
+},
+front: {
+    en: 'Front',
+    ru: 'Передний',
+},
+rear: {
+    en: 'Rear',
+    ru: 'Задний',
+},
+automatic: {
+    en: 'Automatic',
+    ru: 'Автоматическая',
+},
+manual: {
+    en: 'Manual',
+    ru: 'Ручная',
+},
 
-    normal: {
-        en: 'Normal',
-        ru: 'В норме'
-    },
-    similar: {
-        en: 'Similar',
-        ru: 'Все одинаковые'
-    },
-    check: {
-        en: 'Check',
-        ru: 'Проверить'
-    },
-    copyVin: {
-        en: 'Copy VIN',
-        ru: 'Копировать VIN'
-    },
-    choose: {
-        en: 'Choose',
-        ru: 'Выберите'
-    },
-    local_base: {
-        en: 'Local base',
-        ru: 'Местная база'
-    },
-    goto: {
-        en: 'GO',
-        ru: 'ПЕРЕЙТИ'
-    },
-    title: {
-        en: 'Car report',
-        ru: 'Отчет по автомобилю',
-    },
-    mainInfo: {
-        en: 'Main Information',
-        ru: 'Основная информация',
-    },
-    vin: {
-        en: 'VIN',
-        ru: 'VIN',
-    },
-    photo_vin: {
-        en: 'photo of VIN',
-        ru: 'фото VIN',
-    },
-    photo_tech_info: {
-        en: 'photo of vehicle infomation',
-        ru: 'фото информации о транспортном средстве',
-    },
-    fill: {
-        en: 'Fill',
-        ru: 'заполнить',
-    },
-    brand: {
-        en: 'Brand',
-        ru: 'Марка',
-    },
-    model: {
-        en: 'Model',
-        ru: 'Модель',
-    },
-    year: {
-        en: 'Year',
-        ru: 'Год',
-    },
-    body: {
-        en: 'Body',
-        ru: 'Кузов',
-    },
-    bodyColor: {
-        en: 'Body Color',
-        ru: 'Цвет кузова',
-    },
-    engineVolume: {
-        en: 'Engine Volume',
-        ru: 'Объем двигателя',
-    },
-    enginePower: {
-        en: 'Engine Power (hp)',
-        ru: 'Мощность (л.с.)',
-    },
-    mileage: {
-        en: 'Mileage',
-        ru: 'Пробег',
-    },
-    drive: {
-        en: 'Drive',
-        ru: 'Привод',
-    },
-    gearbox: {
-        en: 'Gearbox',
-        ru: 'КПП',
-    },
-    specification: {
-        en: 'Specification',
-        ru: 'Спецификация',
-    },
-    guarantee: {
-        en: 'Guarantee',
-        ru: 'Гарантия',
-    },
-    yearGuarantee: {
-        en: 'Year',
-        ru: 'Год',
-    },
-    monthGuarantee: {
-        en: 'Month',
-        ru: 'Месяц',
-    }, sedan: {
-        en: 'Sedan',
-        ru: 'Седан',
-    },
-    coupe: {
-        en: 'Coupe',
-        ru: 'Купе',
-    },
-    hatchback: {
-        en: 'Hatchback',
-        ru: 'Хэтчбэк',
-    },
-    wagon: {
-        en: 'Wagon',
-        ru: 'Универсал',
-    },
-    crossover: {
-        en: 'Crossover',
-        ru: 'Кроссовер',
-    },
-    full: {
-        en: 'Full',
-        ru: 'Полный',
-    },
-    front: {
-        en: 'Front',
-        ru: 'Передний',
-    },
-    rear: {
-        en: 'Rear',
-        ru: 'Задний',
-    },
-    automatic: {
-        en: 'Automatic',
-        ru: 'Автоматическая',
-    },
-    manual: {
-        en: 'Manual',
-        ru: 'Ручная',
-    },
 
-    tires: {
+tires: {
         en: 'Tires',
         ru: 'Резина'
     },
@@ -1626,6 +1700,7 @@ const translations = {
         ru: 'Сохранить'
     },
 
+
     tire_pressure_sensor: {
         en: 'Tire pressure sensor',
         ru: 'Датчик давления в шинах',
@@ -1679,7 +1754,7 @@ const translations = {
         ru: 'Бесключевой доступ',
     },
     electric_folding_mirrors: {
-        en: 'Electric folding mirrors',
+        en: 'Power folding mirrors',
         ru: 'Электроскладывание зеркал',
     },
     start_stop_system: {
@@ -1747,7 +1822,7 @@ const translations = {
         ru: 'Массаж сидений',
     },
     door_closers: {
-        en: 'Door closers',
+        en: 'Soft close',
         ru: 'Доводчики дверей',
     },
     digital_instrument_panel: {
@@ -1763,6 +1838,7 @@ const translations = {
         ru: 'Фаркоп'
     },
 
+
     parking_sensors: {
         en: 'Parking sensors',
         ru: 'Парктроники',
@@ -1776,7 +1852,7 @@ const translations = {
         ru: 'Кожаный салон',
     },
     third_seat_rows: {
-        en: 'Third seat rows',
+        en: 'Third seats row',
         ru: 'Третий ряд сидений',
     },
     seats_heating: {
@@ -1792,7 +1868,7 @@ const translations = {
         ru: 'Адаптивный круиз-контроль',
     },
     electric_seats: {
-        en: 'Electric seats',
+        en: 'Power seats',
         ru: 'Электрорегулировка сидений',
     },
     seats_memory: {
@@ -1816,8 +1892,8 @@ const translations = {
         ru: 'Виртуальная приборная панель',
     },
     power_steering: {
-        en: 'Power steering',
-        ru: 'Электропривод руля',
+        en: 'Steering wheel with power adjustment',
+        ru: 'Электропривод рулевой колонки',
     },
     adaptive_lights: {
         en: 'Adaptive lights',
@@ -1840,13 +1916,14 @@ const translations = {
         ru: 'Массаж сидений',
     },
     windshield_projection: {
-        en: 'Windshield projection',
+        en: 'Head up display',
         ru: 'Проекция на лобовое стекло',
     },
     premium_audiosystem: {
         ru: 'Премиальная аудиосистема',
         en: 'Premium audiosystem'
     },
+
 
     crashes: {
         en: 'Crashes',
@@ -1865,7 +1942,7 @@ const translations = {
         ru: 'Выберите толщину покраски'
     },
     before: {
-        en: 'before',
+        en: 'below',
         ru: 'до'
     },
     mkm: {
@@ -1881,7 +1958,7 @@ const translations = {
         ru: 'Передний бампер',
     },
     front_left_rack: {
-        en: 'Front Left Rack',
+        en: 'Front Left Pillar',
         ru: 'Передняя левая стойка',
     },
     fenderfrontright: {
@@ -1893,7 +1970,7 @@ const translations = {
         ru: 'Капот',
     },
     front_right_rack: {
-        en: 'Front Right Rack',
+        en: 'Front Right Pillar',
         ru: 'Передняя правая стойка',
     },
     doorfrontright: {
@@ -1901,28 +1978,28 @@ const translations = {
         ru: 'Передняя правая дверь',
     },
     middle_right_rack: {
-        en: 'Middle Right Rack',
+        en: 'Middle Right Pillar',
         ru: 'Средняя правая стойка',
     },
     doorbackright: {
-        en: 'Door Back Right',
+        en: 'Door Rear Right',
         ru: 'Задняя правая дверь',
     },
     back_right_rack: {
-        en: 'Back Right Rack',
+        en: 'Rear Right Pillar',
         ru: 'Задняя правая стойка',
     },
     fenderbackright: {
-        en: 'Fender Back Right',
+        en: 'Fender Rear Right',
         ru: 'Заднее правое крыло',
     },
     hoodback: {
-        en: 'Hood Back',
+        en: 'Rear Bumper',
         ru: 'Задний бампер',
     },
     trunk: {
-        en: 'Trunk',
-        ru: 'Багажник',
+        en: 'Trunk lid',
+        ru: 'Крышка багажника',
     },
     roof: {
         en: 'Roof',
@@ -1937,19 +2014,19 @@ const translations = {
         ru: 'Передняя левая дверь',
     },
     doorbackleft: {
-        en: 'Door Back Left',
+        en: 'Door Rear Left',
         ru: 'Задняя левая дверь',
     },
     middle_left_rack: {
-        en: 'Middle Left Rack',
+        en: 'Middle Left Pillar',
         ru: 'Средняя левая стойка',
     },
     back_left_rack: {
-        en: 'Back Left Rack',
+        en: 'Rear Left Pillar',
         ru: 'Задняя левая стойка',
     },
     fenderbackleft: {
-        en: 'Fender Back Left',
+        en: 'Fender Rear Left',
         ru: 'Заднее левое крыло',
     },
     send_check: {
@@ -2008,16 +2085,31 @@ const translations = {
     saving_error: {
         en: 'Saving error',
         ru: 'Ошибка сохранения'
+    },
+
+    up_to: {
+        en: 'up to',
+        ru: 'выше'
     }
 
 
 };
 
 
+// const ACCOUNT_ID = 'b25f1f1ff5a5dcf374edd15bfea6a47c';
+// const ACCESS_KEY_ID = '62df35b20e1fcd61ba8b50cd07d7fee2';
+// const SECRET_ACCESS_KEY = '22633ab5b7e74f67c54433c17e785f7f489581d787394a902d23b15c96193d80';
+
+const ACCOUNT_ID = 'b25f1f1ff5a5dcf374edd15bfea6a47c';
+const ACCESS_KEY_ID = 'b2e967f493ecb8aa5d77fbbba94c2762';
+const SECRET_ACCESS_KEY = '22e53b32d36351ac73bf524a2e8ec6cc64100df4c1a5087552e012bf15274b94';
+const BUCKET_URL = 'https://pub-84675402c4c14aab91c3354864a2dd93.r2.dev/';
+
 export default {
     name: "QuizView",
     data() {
         return {
+            S3: null,
             interval: null,
             chips: [
                 'Scratch',
@@ -2025,7 +2117,9 @@ export default {
                 'Dent',
                 'Rust',
                 'Disassembly_marks',
-                'Deformation'
+                'Deformation',
+                'Crack',
+                'Gap'
             ],
             photo_dashboard: {photo: ''},
             chosen_equipment_tab: 'medium',
@@ -2095,22 +2189,22 @@ export default {
                 1: {
                     value: 1,
                     label: 300,
-                    color: '#F2F008',
+                    color: '#fef432',
                 },
                 2: {
                     value: 2,
                     label: 500,
-                    color: '#FFD029',
+                    color: '#eb7a42',
                 },
                 3: {
                     value: 3,
                     label: 800,
-                    color: '#ff8629',
+                    color: '#de0202',
                 },
                 4: {
                     value: 4,
                     label: 1000 + '+',
-                    color: '#CC120C',
+                    color: '#6e0202',
                 },
             },
             loader: true,
@@ -2281,7 +2375,6 @@ export default {
                 automatic_high_beam: false,
                 autopilot: false,
                 self_parking: false,
-                premium_seats_ventilation: false,
                 seats_massage: false,
                 multimedia_system_rear_passengers: false,
                 premium_audiosystem: false,
@@ -2303,6 +2396,15 @@ export default {
     },
 
     mounted() {
+        this.S3 = new S3Client({
+                region: "auto",
+                endpoint: `https://${ACCOUNT_ID}.r2.cloudflarestorage.com`,
+                credentials: {
+                    accessKeyId: ACCESS_KEY_ID,
+                    secretAccessKey: SECRET_ACCESS_KEY,
+                },
+            }
+        );
         document.body.classList.add('overflow-hidden');
 
         this.lang = this.$route.params.lang
@@ -2345,7 +2447,9 @@ export default {
             this.tyre.manufacturer = reportData.tyre_manufacturer;
             this.tyre.year = reportData.tyre_year;
             this.tyre.photo = reportData.tyre_photo;
-            this.tyre.preview = reportData.tyre_preview;
+            this.tyre.photo = reportData.tyre_preview;
+            if(reportData.condition != null)
+                this.tyre.condition = reportData.condition;
             this.customTyreBrand = reportData.customTyreBrand;
             this.colored = Object.assign({}, reportData.colored);
             this.photo_external_damage = reportData.photo_external_damage;
@@ -2359,7 +2463,7 @@ export default {
             this.comment_computer_diag = reportData.comment_computer_diag;
             this.tire_similar = reportData.tire_similar
             this.tires = reportData.tires
-            if(!reportData.tires || (Array.isArray(reportData.tires) && !reportData.tires.length))
+            if (!reportData.tires || (Array.isArray(reportData.tires) && !reportData.tires.length))
                 this.tires = {}
             else
                 this.tires = reportData.tires
@@ -2371,6 +2475,7 @@ export default {
             this.price.currency = reportData.price_currency;
             this.photo_vin = reportData.photo_vin;
             this.photo_tech_info = reportData.photo_tech_info;
+            this.photo_dashboard = reportData.photo_dashboard;
 
             if (!this.brands.includes(this.brand)) {
                 this.customBrand = this.brand
@@ -2407,14 +2512,25 @@ export default {
             return this.photo_external_damage.some(photo => photo.name === name);
         },
         toggleChip(photo, chip) {
+            if (!photo.description) {
+                photo.description = ''
+            }
             if (!photo.chips) photo.chips = []
             const index = photo.chips.indexOf(chip);
             if (index === -1) {
                 // If the chip is not in the photo.chips array, add it.
+                photo.description = photo.description.trim();
+
+                photo.description += (photo.description ? ', ' : '') + this.tr(chip.toLowerCase()).toLowerCase();
                 photo.chips.push(chip);
+
+
             } else {
                 // If the chip is already in the photo.chips array, remove it.
                 photo.chips.splice(index, 1);
+                photo.description = photo.description.replace(new RegExp(',? ?' + this.tr(chip.toLowerCase()).toLowerCase() , 'g'), '')
+
+
             }
         },
         addAnotherTire(tire) {
@@ -2464,7 +2580,7 @@ export default {
             this.startLoading()
             axios.put(base_url + 'reports/save', this.getReportData()).then(() => {
                 alert(this.tr('saved'))
-                
+
             }).catch(error => {
                 // Handle any errors that occurred during the request
                 alert(this.tr('saving_error'))
@@ -2544,7 +2660,7 @@ export default {
                 },
                 tires: Object.entries(this.tires).reduce((newTires, [key, tire]) => {
                     // eslint-disable-next-line no-unused-vars
-                    let { preview, ...tireWithoutPreview } = tire;
+                    let {preview, ...tireWithoutPreview} = tire;
                     newTires[key] = tireWithoutPreview;
                     return newTires;
                 }, {}),
@@ -2560,25 +2676,25 @@ export default {
                 colored: this.colored,
                 photo_external_damage: this.photo_external_damage.map(photo => {
                     // eslint-disable-next-line no-unused-vars
-                    const { preview, ...photoWithoutPreview } = photo;
+                    const {preview, ...photoWithoutPreview} = photo;
                     return photoWithoutPreview;
                 }),
                 photo_internal_damage: this.photo_internal_damage.map(photo => {
                     // eslint-disable-next-line no-unused-vars
-                    const { preview, ...photoWithoutPreview } = photo;
+                    const {preview, ...photoWithoutPreview} = photo;
                     return photoWithoutPreview;
                 }),
                 photo_external: this.photo_external.map(photo => {
                     // eslint-disable-next-line no-unused-vars
-                    const { preview, ...photoWithoutPreview } = photo;
+                    const {preview, ...photoWithoutPreview} = photo;
                     return photoWithoutPreview;
                 }),
                 photo_internal: this.photo_internal.map(photo => {
                     // eslint-disable-next-line no-unused-vars
-                    const { preview, ...photoWithoutPreview } = photo;
+                    const {preview, ...photoWithoutPreview} = photo;
                     return photoWithoutPreview;
                 }),
-                photo_dashboard: this.photo_dashboard.photo,
+                photo_dashboard: {'photo': this.photo_dashboard.photo},
 
                 functions_check: this.functions_check,
                 functions_problems: this.functions_problems,
@@ -2604,18 +2720,32 @@ export default {
         chooseDetail(detail) {
             this.chosen_detail = detail
             if (!this.colored[detail]) {
-                this.colored[detail] = '1'
+                this.colored[detail] = 1
+            } else if (this.colored[detail] == 4) {
+                this.colored[detail] = 0
+            } else {
+                this.colored[detail]++
             }
-            console.log(this.colored)
-            this.modal_color = true;
+            // console.log(this.colored)
+            // this.modal_color = true;
         },
         chooseDetailDamage(detail) {
-            if (!this.doesPhotoExist(detail))
-                this.photo_external_damage.unshift({'name': detail, "photo": null, "description": "", "chips": []})
+            this.photo_external_damage.push({'name': detail, "photo": null, "description": "", "chips": []})
+
+            this.$nextTick(() => {
+                var damageCards = document.querySelectorAll('.damage-cards .damage-card');
+                var lastDamageCard = damageCards[damageCards.length - 1];
+                var elementPosition = lastDamageCard.getBoundingClientRect().top + window.pageYOffset;
+                window.scrollTo({top: elementPosition - 20, behavior: 'smooth'});
+
+            })
+
         },
 
         decodeVin() {
 
+            this.vin = this.vin.toUpperCase()
+            console.log(this.vin + '|decode|7afb5e0f8c22|fac2b495f0')
             let controlSum = sha1(this.vin + '|decode|7afb5e0f8c22|fac2b495f0').substring(0, 10)
             axios.get('https://api.vindecoder.eu/3.2/7afb5e0f8c22/' + controlSum + '/decode/' + this.vin + '.json').then(response => {
                 let info = []
@@ -2629,11 +2759,63 @@ export default {
                 }
                 this.model = info['Model']
                 this.year = info['Model Year']
-                if(info['Engine Displacement (ccm)'] )
+                if (info['Engine Displacement (ccm)'])
                     this.engine_volume = info['Engine Displacement (ccm)'] / 1000
                 console.log(info['Transmission'])
             })
         },
+        uploadFileToR2(event) {
+            const file = event.target.files[0];
+
+            const originalFileName = file.name;
+            const timestamp = new Date().getTime();
+            const newFileName = `${timestamp}-${originalFileName}`;
+
+            this.S3.send(
+                new PutObjectCommand({
+                    "Body": file,
+                    "Bucket": "car-experts",
+                    "Key": newFileName  // Use the new file name here
+                })
+            ).then(response => {
+                let url = BUCKET_URL + newFileName;
+                console.log(response.data);
+                // const file = event.target.files[0];
+
+                // reader.onload = (event) => {
+                // };
+
+                
+                if (event.target.getAttribute('data-subfield'))
+                    if (event.target.getAttribute('data-index')) {
+                        this[event.target.getAttribute('data-field')][event.target.getAttribute('data-index')][event.target.getAttribute('data-subfield')] = url
+                        // reader.onload = (e) => {
+                        //     this[event.target.getAttribute('data-field')][event.target.getAttribute('data-index')]['photo'] =
+                        //         e.target.result;
+                        // };
+
+                        // reader.readAsDataURL(file);
+
+                    } else {
+                        this[event.target.getAttribute('data-field')][event.target.getAttribute('data-subfield')] = url
+                        // reader.onload = (e) => {
+                        //     this[event.target.getAttribute('data-field')]['photo'] =
+                        //         e.target.result;
+                        // };
+                    }
+                else if (event.target.getAttribute('data-index')) {
+                    console.log(event.target.getAttribute('data-field') + ' ' + event.target.getAttribute('data-index'))
+                    this[event.target.getAttribute('data-field')][event.target.getAttribute('data-index')] = url
+                } else
+                    this[event.target.getAttribute('data-field')] = url
+            }).catch(error => {
+                console.log(error.response.data);
+            }).finally(() => {
+                this.loader = false;
+
+            });
+        },
+
 
         //todo сделать ввод файлов
         previewFile(event) {
@@ -2662,7 +2844,7 @@ export default {
                     if (event.target.getAttribute('data-index')) {
                         this[event.target.getAttribute('data-field')][event.target.getAttribute('data-index')][event.target.getAttribute('data-subfield')] = id
                         reader.onload = (e) => {
-                            this[event.target.getAttribute('data-field')][event.target.getAttribute('data-index')]['preview'] =
+                            this[event.target.getAttribute('data-field')][event.target.getAttribute('data-index')]['photo'] =
                                 e.target.result;
                         };
 
@@ -2671,7 +2853,7 @@ export default {
                     } else {
                         this[event.target.getAttribute('data-field')][event.target.getAttribute('data-subfield')] = id
                         reader.onload = (e) => {
-                            this[event.target.getAttribute('data-field')]['preview'] =
+                            this[event.target.getAttribute('data-field')]['photo'] =
                                 e.target.result;
                         };
                     }
@@ -2690,49 +2872,62 @@ export default {
 
         },
 
-        previewFiles(event) {
+        uploadFilesToR2(event) {
             const uploadedFiles = event.target.files;
             const totalSizeInMB = Array.from(uploadedFiles)
                 .reduce((totalSize, file) => totalSize + file.size, 0) / (1024 * 1024);
+            this.startLoading(totalSizeInMB);
 
-            this.startLoading(totalSizeInMB)
+            // let uploadedFileData = [];
 
-            const uploadedFileData = [];
+            const processFile = (index) => {
+                console.log('process - ' + index)
+                if (index >= uploadedFiles.length) {
+                    this.loader = false;
+                    return;
+                }
+                console.log('process - ' + index)
 
-            const processFile = (file, index) => {
+                const file = uploadedFiles[index];
+                
+
+            const originalFileName = file.name;
+            const timestamp = new Date().getTime();
+            const newFileName = `${timestamp}-${originalFileName}`;
+
                 const formData = new FormData();
                 formData.append('file', file);
 
-                axios.post(base_url + 'uploadFile', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }).then(response => {
+                
+            this.S3.send(
+                new PutObjectCommand({
+                    "Body": file,
+                    "Bucket": "car-experts",
+                    "Key": newFileName  // Use the new file name here
+                })
+            ).then(response => {
+                    let url = BUCKET_URL + newFileName;
                     console.log(response.data);
-                    const reader = new FileReader();
-                    let id = response.data.id;
+                    // const reader = new FileReader();
+                    // uploadedFileData.push({photo: url});
+                    this[event.target.getAttribute('data-field')] = this[event.target.getAttribute('data-field')].concat([{photo: url}]);
+                    // reader.onload = (e) => {
+                    //     uploadedFileData.push({photo: url, preview: e.target.result});
 
-                    reader.onload = (e) => {
-                        uploadedFileData.push({photo: id, preview: e.target.result});
+                    //     if (uploadedFileData.length === uploadedFiles.length) {
+                    //         this[event.target.getAttribute('data-field')] = this[event.target.getAttribute('data-field')].concat(uploadedFileData);
+                    //     }
+                    // };
 
-                        if (uploadedFileData.length === uploadedFiles.length) {
-                            this[event.target.getAttribute('data-field')] = this[event.target.getAttribute('data-field')].concat(uploadedFileData);
-                        }
-                    };
-
-                    reader.readAsDataURL(file);
+                    // reader.readAsDataURL(file);
                 }).catch(error => {
                     console.log(error.response.data);
                 }).finally(() => {
-                    if (index === uploadedFiles.length - 1) {
-                        this.loader = false;
-                    }
+                    processFile(index + 1);
                 });
             };
 
-            for (let i = 0; i < uploadedFiles.length; i++) {
-                processFile(uploadedFiles[i], i);
-            }
+            processFile(0);
         },
 
         validate() {
@@ -2792,159 +2987,246 @@ export default {
 
             console.log('increment ' + increment)
             return increment;
-        }
+        },
+        updateTireCondition(key) {
+            const nowYear = new Date().getFullYear();
+            if (this.tires[key].year && this.tires[key].year < nowYear - 3) {
+                this.tires[key].condition = false;
+            }
+        },
 
     },
 
     computed: {},
 
     watch: {
-        'loader' : function(newVal) {
-            if (this.loader == false){
-                this.progress = 0;
-                clearInterval(this.interval);
-            }
-            if (newVal) {
-                document.body.classList.add('overflow-hidden');
-            } else {
-                document.body.classList.remove('overflow-hidden');
-            }
+        tires: {
+            handler() {
+                    this.updateReport();
+            },
+            deep: true,
         },
-        'photo_vin.photo': function () {
-            this.updateReport();
-        },
-        'photo_tech_info.photo': function () {
-            this.updateReport();
-        },
-        'master.name': function () {
-            this.updateReport();
-        },
-        'master.lastname': function () {
-            this.updateReport();
-        },
-        'master.lang': function () {
-            this.updateReport();
-        },
-        crashes: function () {
-            this.updateReport();
-        },
-        vin: function () {
-            this.updateReport();
-        },
-        brand: function () {
-            this.updateReport();
-        },
-        customBrand: function () {
-            this.updateReport();
-        },
-        model: function () {
-            this.updateReport();
-        },
-        year: function () {
-            this.updateReport();
-        },
-        body: function () {
-            this.updateReport();
-        },
-        body_color: function () {
-            this.updateReport();
-        },
-        engine_volume: function () {
-            this.updateReport();
-        },
-        engine_power: function () {
-            this.updateReport();
-        },
-        drive: function () {
-            this.updateReport();
-        },
-        specification: function () {
-            this.updateReport();
-        },
-        guarantee_check: function () {
-            this.updateReport();
-        },
-        'guarantee.year': function () {
-            this.updateReport();
-        },
-        'guarantee.month': function () {
-            this.updateReport();
-        },
-        'tyre.manufacturer': function () {
-            this.updateReport();
-        },
+
         'tyre.year': function () {
             this.updateReport();
         },
-        'tyre.photo': function () {
+
+        'loader':
+
+            function (newVal) {
+                if (this.loader == false) {
+                    this.progress = 0;
+                    clearInterval(this.interval);
+                }
+                if (newVal) {
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            }
+
+        ,
+        'photo_vin.photo':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'photo_tech_info.photo':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'master.name':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'master.lastname':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'master.lang':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        crashes: function () {
             this.updateReport();
-        },
+        }
+        ,
+        vin: function () {
+            this.updateReport();
+        }
+        ,
+        brand: function () {
+            this.updateReport();
+        }
+        ,
+        customBrand: function () {
+            this.updateReport();
+        }
+        ,
+        model: function () {
+            this.updateReport();
+        }
+        ,
+        year: function () {
+            this.updateReport();
+        }
+        ,
+        body: function () {
+            this.updateReport();
+        }
+        ,
+        body_color: function () {
+            this.updateReport();
+        }
+        ,
+        engine_volume: function () {
+            this.updateReport();
+        }
+        ,
+        engine_power: function () {
+            this.updateReport();
+        }
+        ,
+        drive: function () {
+            this.updateReport();
+        }
+        ,
+        specification: function () {
+            this.updateReport();
+        }
+        ,
+        guarantee_check: function () {
+            this.updateReport();
+        }
+        ,
+        'guarantee.year':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'guarantee.month':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'tyre.manufacturer':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+
+        'tyre.photo':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
         customTyreBrand: function () {
             this.updateReport();
-        },
+        }
+        ,
         colored: function () {
             this.updateReport();
-        },
+        }
+        ,
         tire_similar: function () {
             this.updateReport();
-        },
-        tires: {
-            handler: function () {
-                this.updateReport();
-            },
-            deep: true
-        },
+        }
+        ,
+
         equipment: {
             handler: function () {
                 this.updateReport();
-            },
+            }
+            ,
             deep: true
-        },
+        }
+        ,
         photo_external_damage: {
             handler: function () {
                 this.updateReport();
-            },
+            }
+            ,
             deep: true
-        },
+        }
+        ,
         photo_internal_damage: {
             handler: function () {
                 this.updateReport();
-            },
+            }
+            ,
             deep: true
-        },
+        }
+        ,
         photo_external: {
             handler: function () {
                 this.updateReport();
-            },
+            }
+            ,
             deep: true
-        },
+        }
+        ,
         photo_internal: {
             handler: function () {
                 this.updateReport();
-            },
+            }
+            ,
             deep: true
-        },
+        }
+        ,
         functions_check: function () {
             this.updateReport();
-        },
+        }
+        ,
         functions_problems: function () {
             this.updateReport();
-        },
+        }
+        ,
         comment: function () {
             this.updateReport();
-        },
+        }
+        ,
         computer_diag: function () {
             this.updateReport();
-        },
+        }
+        ,
         video: function () {
             this.updateReport();
-        },
-        'price.value': function () {
-            this.updateReport();
-        },
-        'price.currency': function () {
-            this.updateReport();
         }
+        ,
+        'price.value':
+
+            function () {
+                this.updateReport();
+            }
+
+        ,
+        'price.currency':
+
+            function () {
+                this.updateReport();
+            }
     }
 }
 </script>
@@ -3236,7 +3518,8 @@ h2
     height: 130px
     max-width: 255px
     min-width: 90px
-    width: auto
+    min-width: 90px
+    width: 100%
     object-fit: cover
     border-radius: 5px
 

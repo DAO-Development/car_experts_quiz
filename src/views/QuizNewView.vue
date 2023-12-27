@@ -4,7 +4,7 @@
         <div class="container">
 
             <div class="usl-header__logo">
-                <img src="./../assets/logo.svg" alt="">
+                <img src="./../assets/logo.png" alt="">
             </div>
         </div>
 
@@ -129,7 +129,7 @@ const translations =
         },
     }
 // const base_url = 'http://127.0.0.1:8000/api/'
-const base_url = 'https://carexpertsnew.ffox.site/api/'
+const base_url = 'https://report.car-experts.ae/api/'
 export default {
     name: "QuizNewView",
     data() {
@@ -213,7 +213,7 @@ export default {
     .form-wrapper
         display: grid
         align-items: center
-        height: calc(100vh - 100px)
+        height: calc(75vh - 100px)
 
     .form-group
         text-align: start
