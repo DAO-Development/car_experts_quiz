@@ -117,9 +117,9 @@
                         <div class="form-group">
                             <label class="form-label">{{ tr('drive') }}</label>
                             <select v-model="drive" name="" class="form-select">
-                                <option :value="tr('all')">{{ tr('All') }}</option>
-                                <option :value="tr('front')">{{ tr('Front') }}</option>
-                                <option :value="tr('rear')">{{ tr('Rear') }}</option>
+                                <option :value="tr('all')">{{ tr('all') }}</option>
+                                <option :value="tr('front')">{{ tr('front') }}</option>
+                                <option :value="tr('rear')">{{ tr('rear') }}</option>
                             </select>
                         </div>
                     </div>
@@ -1580,6 +1580,10 @@ front: {
 rear: {
     en: 'Rear',
     ru: 'Задний',
+},
+all: {
+    en: 'All',
+    ru: 'Полный',
 },
 automatic: {
     en: 'Automatic',
